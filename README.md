@@ -13,10 +13,12 @@
 ## 12. Should be open source
 
 
-
 ## Feature ideas
 - Randomly generate todos that involve reaching out to friends
 - Randomly generate todos that involve QT with significant other
 - Randomly generate todos that involve self-care
 - Randomly generate todos that involve self-improvement
 - Gameify / track and reward with points or other
+- Optional timer on todos?
+- Optional pomodoro timer?
+- Optional time tracking?
