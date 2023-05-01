@@ -9,6 +9,15 @@ $:feed = data.feed as Feed;
 
 
 $:todos = feed?.todos ?? [];
+$: incomplete = todos.filter(todo => todo.completedAt == null);
+$: completed = todos.filter(todo => todo.completedAt != null);
+
+//- sort by order
+$: todos.sort((a, b) => {
+	if (a.order > b.order) return 1;
+	if (a.order < b.order) return -1;
+	return 0;
+});
 
 type Todo = typeof todos[0];
 let todo: Todo;
@@ -50,14 +59,27 @@ $: name = data.feed?.name ? data.feed.name : 'test';
 				.mb-4 Welcome, {name}!
 
 				//- todos
-				+each('todos as todo, index (todo.id)')
-					+const('tags = todo.tags ? todo.tags.split(",") : []')
-
-					.mb-4
-						.inline-block.mr-2 {index + 1}.
-						.inline-block.mr-2 {todo.description}
-						+each('tags as tag')
-							span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
+				//- incomplete
+				.border-t.border-white.border-opacity-40.mt-8.pt-8
+					div.mb-8.font-semibold to do today
+					+each('incomplete as todo, index (todo.id)')
+						+const('tags = todo.tags ? todo.tags.split(",") : []')
+						div
+							+if('!todo.archived')
+								.mb-4
+									.inline-block.mr-2 {index + 1}.
+									.inline-block.mr-2 {todo.description}
+									+each('tags as tag')
+										span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
+				div.border-t.border-white.border-opacity-40.mt-8.pt-8
+					div.mb-8.font-semibold completed today
+					+each('completed as todo, index (todo.id)')
+						+const('tags = todo.tags ? todo.tags.split(",") : []')
+						+if('todo.archived != true')
+							.mb-4
+								.inline-block.mr-2.line-through {todo.description}
+								+each('tags as tag')
+									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
 
 
 
