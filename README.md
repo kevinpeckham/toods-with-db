@@ -9,6 +9,9 @@
 ## 8. Should incentivize healthy habits
 ## 9. Should encourage work / life balance
 ## 10. Should encourage intentionality
+## 11. Should respect privacy
+## 12. Should be open source
+
 
 
 ## Feature ideas
