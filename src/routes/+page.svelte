@@ -1,65 +1,64 @@
 <!-- Example Svelte Page / Starter Web Page-->
 <script lang="ts">
-	// components
-	import ButtonLink from "$atoms/ButtonLink.svelte";
-	import Footer from "$atoms/Footer.svelte";
-	import LogosGrid from "$molecules/LogosGrid.svelte";
-	import PreFooter from "$atoms/PreFooter.svelte";
+import type { PageData } from "./$types";
+export let data: PageData;
 
-	// store
-	import { brands } from "$stores/brandsStore";
 
-	// logos to display
-	$brands = [
-		{ name: "Svelte", url: "https://svelte.dev/" },
-		{ name: "Typescript", url: "https://www.typescriptlang.org/" },
-		{ name: "TailwindCSS", url: "https://tailwindcss.com/" },
-		{ name: "Pug", url: "https://pugjs.org/api/getting-started.html" },
-	];
+type Feed = typeof data.feed;
+$:feed = data.feed as Feed;
+
+
+$:todos = feed?.todos ?? [];
+
+type Todo = typeof todos[0];
+let todo: Todo;
+
+type Tag = string;
+let tag: Tag;
+
+// variables
+
+
+
+let name: string = 'test';
+$: name = data.feed?.name ? data.feed.name : 'test';
+
+// let todos: Todo[] (data.feed.todos) = [];
+// $: todos = data.feed?.todos ? data.feed.todos : [];
+
+// $:console.log(todos)
+
+
 </script>
 
 <template lang="pug">
 	//- head
 	svelte:head
-		title Svelte Pug Tailwind Typescript | SkinnyPug
+		title toods + sqlite
 		meta(
-			content="A node starter template for the Svelte Preprocessed stack.",
-			name="description"
+			content="",
+			name=""
 		)
 
 	//- body
-	main.relative.grid.min-h-screen.place-content-center.bg-primary.p-4.pb-48.text-white
+	main.relative.grid.min-h-screen.bg-primary.p-4.pb-48.text-white.px-8.py-8
 		div(class="sm:max-w-lg lg:max-w-xl xl:max-w-2xl")
-			LogosGrid
 
 			.text-center(class="sm:text-left")
-				//- headline
-				h1.prose-xl.mb-3.font-semibold.text-accent
-					| Hit the ground running with Sveltekit, Typescript, TailwindCSS &amp; Pug.
 
-				//- text
-				p.text-md.prose-base.mb-10.opacity-90(class="sm:mb-8")
-					| This project is an open source starter template for Node projects using SvelteKit, Typescript, TailwindCSS, and Pug. Designed to help get you up and running quickly with the SkinnyPug Stack.
+				//- welcome message
+				.mb-4 Welcome, {name}!
 
-				//- cta
-				ButtonLink(
-					targetUrl="https://github.com/lightning-jar/lj-sveltekit-ts-tailwind-pug-starter",
-					title="View project on Github"
-				)
-					| Clone from Github
+				//- todos
+				+each('todos as todo, index (todo.id)')
+					+const('tags = todo.tags ? todo.tags.split(",") : []')
 
-	//- pre-footer
-	PreFooter(
-		targetUrl="https://pugify.dev",
-		title="convert HTML to pug"
-	)
-		svelte:fragment(slot="default") Also check out the ad-free HTML to Pug converter @ https://pugify.dev
+					.mb-4
+						.inline-block.mr-2 {index + 1}.
+						.inline-block.mr-2 {todo.description}
+						+each('tags as tag')
+							span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
 
-	//- footer
-	Footer(
-		authorLink="https://fosstodon.org/@kevinpeckham",
-		orgLink="https://lightningjar.com"
-	)
-		svelte:fragment(slot="author") Kevin Peckham
-		svelte:fragment(slot="org") Lightning Jar
+
+
 </template>
