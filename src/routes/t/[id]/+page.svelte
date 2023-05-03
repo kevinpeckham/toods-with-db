@@ -22,7 +22,11 @@
 		new Date(response?.dueAt).toISOString().split('.')[0] :
 		null;
 
-	$:console.log(dueAt)
+	// scheduled to start at
+	let scheduledToStartAt: string | null;
+	$: scheduledToStartAt = response?.scheduledToStartAt ?
+		new Date(response?.scheduledToStartAt).toISOString().split('.')[0] :
+		null;
 
 
 </script>
@@ -141,6 +145,27 @@ div.px-8.py-8.bg-primary.min-h-screen.text-white
 				default="now"
 				name="dueAt"
 				)
+		.flex.gap-x-4
+			//- Scheduled to start at
+			div
+				label.mb-2.leading-none.flex.items-center(for="completedAt") Scheduled - Starting at:
+				input#scheduledToStartAt.w-48(
+						value!="{scheduledToStartAt}"
+						class="!mb-6"
+						type="datetime-local"
+						default="now"
+						name="scheduledToStartAt"
+						)
+			div
+				//- Scheduled to start at
+				label.mb-2.leading-none.flex.items-center(for="completedAt") Scheduled - Finishing at
+				input#scheduledToStartAt.w-48(
+						value!="{scheduledToStartAt}"
+						class="!mb-6"
+						type="datetime-local"
+						default="now"
+						name="scheduledToStartAt"
+						)
 		//- completedAt
 		label.mb-2.leading-none.flex.items-center(for="completedAt") Was Completed At
 		input#completedAt.w-96(
@@ -151,8 +176,10 @@ div.px-8.py-8.bg-primary.min-h-screen.text-white
 				name="completedAt"
 				)
 		div.mt-8
-			flex: button.mr-4.px-2.py-2.outline-white.outline.rounded(formaction="?/updateTodo" type="submit") Update
-			a.back.underline.underline-offset-4(href="/") or Cancel
+			.flex.items-center
+				button.mr-4.px-2.py-2.outline-white.outline.rounded(formaction="?/updateTodo" type="submit") Update
+				a.inline-block.mr-4.back.underline.underline-offset-4(href="/") cancel
+				button.inline-block.back.underline.underline-offset-4(formaction="?/deleteTodo" type="submit") delete
 
 
 	</template>

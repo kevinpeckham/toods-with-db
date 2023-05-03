@@ -45,11 +45,15 @@ let tag: Tag;
 let name: string = 'test';
 $: name = data.feed?.name ? data.feed.name : 'test';
 
-// let todos: Todo[] (data.feed.todos) = [];
-// $: todos = data.feed?.todos ? data.feed.todos : [];
 
-// $:console.log(todos)
 
+// functions
+function isScheduledForToday(todo:Todo) {
+	const today = new Date().toLocaleString().split(',')[0];
+	const scheduled = todo?.scheduledToStartAt?.toLocaleString().split(',')[0];
+	if (scheduled == today) return true;
+	else return false;
+}
 
 </script>
 
@@ -73,7 +77,7 @@ $: name = data.feed?.name ? data.feed.name : 'test';
 					.mb-4 Welcome, {name}!
 
 				//- todos
-				//- incomplete
+				//- incomplete today
 				.border-t.border-white.border-opacity-40.mt-8.pt-8
 					.flex.mb-8.justify-between
 						div.font-semibold to do today
@@ -81,12 +85,16 @@ $: name = data.feed?.name ? data.feed.name : 'test';
 					+each('incomplete as todo, index (todo.id)')
 						+const('tags = todo.tags ? todo.tags.split(",") : []')
 						div
-							+if('!todo.archived && todo.today')
+							+if('!todo.archived && isScheduledForToday(todo)')
 								.mb-4
 									.inline-block.mr-2 {todo.order}.
 									.inline-block.mr-2 {todo.description}
 									+each('tags as tag')
 										span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
+									//- edit
+									a.inline-block.py-1.px-2.leading-none.ml-3.text-13(class="hover:text-accent underline underline-offset-4" href="/t/{todo.id}") edit
+									//- test
+				//- completed today
 				div.border-t.border-white.border-opacity-40.mt-8.pt-8
 					div.mb-8.font-semibold completed today
 					+each('completed as todo, index (todo.id)')

@@ -45,6 +45,12 @@ function displayDate(date: Date) {
 
 	return [dateOnly, timeNoSeconds, amPm] as string[];
 }
+function isScheduledForToday(todo:Todo) {
+	const today = new Date().toLocaleString().split(',')[0];
+	const scheduled = todo?.scheduledToStartAt?.toLocaleString().split(',')[0];
+	if (scheduled == today) return true;
+	else return false;
+}
 
 
 </script>
@@ -62,20 +68,62 @@ function displayDate(date: Date) {
 	main.relative.grid.min-h-screen.bg-primary.p-4.pb-48.text-white.px-8.py-8
 		div.w-full
 			//- welcome message
-			.mb-4 Welcome, {name}!
+			.flex.justify-between
+				.mb-4 Welcome, {name}!
+				div: a.text-13(href="/create" class="inline-block py-2 px-2 rounded outline-white outline leading-none") + Create Todo
+
+			//- body
 			.grid.grid-cols-2.w-full.gap-8
+				//- incomplete - today
+				.border-t.border-white.border-opacity-40.mt-8.pt-8
+					.flex.mb-8.justify-between
+						div.font-semibold to do -
+							a.inline-block.ml-2.underline.underline-offset-4(href="/today") today
 
-
-
-				//- todos
-				//- incomplete
-
-				.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
-					div.mb-8.font-semibold all incomplete todos
 					+each('incomplete as todo, index (todo.id)')
 						+const('tags = todo.tags ? todo.tags.split(",") : []')
 						div
-							+if('!todo.archived')
+							+if('!todo.archived && isScheduledForToday(todo)')
+								form(method="post" class="actions").mb-4
+									input.text-primary.text-13(
+										class="inline-block.mr-2",
+										name!="id",
+										hidden
+										id!="id-{todo.id}"
+										type="text",
+										value!="{todo.id}"
+									)
+									.inline-block.mr-2 {todo.order}.
+									.inline-block.mr-2 {todo.description}
+									//- tags
+									.inline-block.mr-4
+										+each('tags as tag')
+											span.inline-block.py-1.px-2.rounded.border-white.border.leading-none.ml-3.text-12(class="border-[1px]") {tag}
+									//- edit
+									a.inline-block.py-1.px-2.leading-none.mr-2.text-13(class="hover:text-accent underline underline-offset-4 opacity-80 hover:opacity-100" href="/t/{todo.id}") edit
+									//- delete
+									button.inline-block.back.underline.underline-offset-4.text-13(class="hover:text-accent opacity-80 hover:opacity-100" formaction="?/deleteTodo" type="submit") delete
+
+				//- completed today
+				.border-t.border-white.border-opacity-40.mt-8.pt-8
+					div.mb-8.font-semibold completed today
+					+each('completed as todo, index (todo.id)')
+						+const('tags = todo.tags ? todo.tags.split(",") : []')
+						+if('todo.archived != true && new Date(todo.completedAt).toDateString() == new Date().toDateString()')
+							.mb-4
+								.inline-block.mr-2.line-through {todo.description}
+								+each('tags as tag')
+									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
+
+				//- todos
+				//- incomplete  todos not assigned to today
+
+				.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
+					div.mb-8.font-semibold incomplete todos - not scheduled for today
+					+each('incomplete as todo, index (todo.id)')
+						+const('tags = todo.tags ? todo.tags.split(",") : []')
+						div
+							+if('!todo.archived && !isScheduledForToday(todo)')
 								.mb-4
 									.inline-block.mr-2 {todo.order}.
 									.inline-block.mr-2 {todo.description}

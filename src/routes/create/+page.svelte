@@ -1,12 +1,6 @@
 <script lang="ts">
 	import type { ActionData } from "./$types";
 	export let form: ActionData;
-
-	// stores
-	import { todosStore, orderCount } from "$stores/todosStore";
-
-	$:console.log($orderCount)
-
 </script>
 
 <template lang="pug">
@@ -38,7 +32,7 @@ div.px-8.py-8.bg-primary.min-h-screen.text-white
 				//- order
 				.flex.items-center
 					input.mr-2.w-20#order(
-						value!="{form?.order ?? $orderCount}"
+						value!="{form?.order ?? null}"
 						type="number"
 						min="-1"
 						name="order"
@@ -95,6 +89,7 @@ div.px-8.py-8.bg-primary.min-h-screen.text-white
 			placeholder="tags"
 			name="tags"
 			)
+
 		//- due
 		label.mb-2.leading-none.flex.items-center(for="dueAt") Due on
 		input#dueAt.w-96(
@@ -104,6 +99,27 @@ div.px-8.py-8.bg-primary.min-h-screen.text-white
 				default="now"
 				name="dueAt"
 				)
+		.flex.gap-x-4
+			//- Scheduled to start at
+			div
+				label.mb-2.leading-none.flex.items-center(for="scheduledToStartAt") Scheduled - Starting at:
+				input#scheduledToStartAt.w-48(
+						value!="{form?.scheduledToStartAt ?? null}"
+						class="!mb-6"
+						type="datetime-local"
+						default="now"
+						name="scheduledToStartAt"
+						)
+			//- Scheduled to finish at
+			div
+				label.mb-2.leading-none.flex.items-center(for="scheduledToEndAt") Scheduled - Finishing at
+				input#scheduledToEndAt.w-48(
+						value!="{form?.scheduledToEndAt ?? null}"
+						class="!mb-6"
+						type="datetime-local"
+						default="now"
+						name="scheduledToEndAt"
+						)
 		//- completedAt
 		label.mb-2.leading-none.flex.items-center(for="completedAt") Was Completed At
 		input#completedAt.w-96(

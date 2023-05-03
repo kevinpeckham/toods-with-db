@@ -55,6 +55,37 @@ function dueAtFieldValue(data:FormData) {
 	}
 }
 
+function scheduledToStartAtFieldValue(data:FormData) {
+	const value = data.get("scheduledToStartAt");
+	if (value == "null" || value == "" || value == undefined) {
+		return null
+	} else {
+		if (typeof value == "string") {
+			const dateTime =  convertDateInputToISOString(value)
+			if (dateTime == "Invalid Date") {
+				return null
+			}
+			else return dateTime
+		}
+		else return null;
+	}
+}
+
+function scheduledToEndAtFieldValue(data:FormData) {
+	const value = data.get("scheduledToEndAt");
+	if (value == "null" || value == "" || value == undefined) {
+		return null
+	} else {
+		if (typeof value == "string") {
+			const dateTime =  convertDateInputToISOString(value)
+			if (dateTime == "Invalid Date") {
+				return null
+			}
+			else return dateTime
+		}
+		else return null;
+	}
+}
 
 export const actions = {
 	// 1.
@@ -70,6 +101,8 @@ export const actions = {
 		const tags = data.get("tags") ? data.get("tags") : "";
 		const completedAt = completedAtFieldValue(data);
 		const dueAt = dueAtFieldValue(data);
+		const scheduledToStartAt = scheduledToStartAtFieldValue(data);
+		const scheduledToEndAt = scheduledToEndAtFieldValue(data);
 
 
 
@@ -88,21 +121,28 @@ export const actions = {
 			return fail(400, { incorrect: true })
 		}
 
-		4.
+		const datum = {
+			id: nanoid(),
+			completedAt: completedAt,
+			dueAt: dueAt,
+			next: next,
+			today: today,
+			order: completedAt ? -1 : order, // if completedAt is set, set order to -1
+			priority: priority,
+			friction: friction,
+			joy: joy,
+			description: description,
+			scheduledToStartAt: scheduledToStartAt,
+			scheduledToEndAt: scheduledToEndAt,
+			tags: tags,
+			user: { connect: { id: userId } }
+		};
+
+		console.log(datum)
+
+
 		await prisma.todo.create({
-			data: {
-				id: nanoid(),
-				completedAt: completedAt,
-				next: next,
-				today: today,
-				order: completedAt ? -1 : order, // if completedAt is set, set order to -1
-				priority: priority,
-				friction: friction,
-				joy: joy,
-				description: description,
-				tags: tags,
-				user: { connect: { id: userId } }
-			},
+			data: datum
 		});
 
 		//5.

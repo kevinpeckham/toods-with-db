@@ -35,7 +35,6 @@ export const load: PageServerLoad = async ({ params: { id } }) => {
 export const actions = {
 	updateTodo: async ({ request }) => {
 		const data = await request.formData();
-		if (data) console.log(data)
 		const id = data.get("id") ? data.get("id") : null
 		const userId = data.get("userId") ? data.get("userId") : null
 		const description = data.get("description") ? data.get("description") : null
@@ -81,5 +80,26 @@ export const actions = {
 
 	// redirect to home page
 	throw redirect(303, `/`)
-	}
+	},
+	deleteTodo: async ({ request }) => {
+		const data = await request.formData();
+		const id = data.get("id") ? data.get("id") : null;
+
+		// make sure required fields are present
+		if (!id) {
+			return fail(400, { id, missing: true });
+		}
+
+	// make sure fields are the right type
+	if (
+			typeof id != "string") {
+			return fail(400, { incorrect: true })
+	 	}
+
+		await prisma.todo.delete({
+			where: { id: id },
+			});
+
+			throw redirect(303, `/`)
+	},
 } satisfies Actions;
