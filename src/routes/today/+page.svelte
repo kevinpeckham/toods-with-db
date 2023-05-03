@@ -1,6 +1,13 @@
 <!-- Example Svelte Page / Starter Web Page-->
 <script lang="ts">
 import type { PageData } from "./$types";
+
+//- store
+import { todosStore, orderCount } from "$stores/todosStore";
+
+//$:console.log($todosStore)
+
+//- catch data from server / load function
 export let data: PageData;
 
 
@@ -9,6 +16,9 @@ $:feed = data.feed as Feed;
 
 
 $:todos = feed?.todos ?? [];
+
+
+
 $: incomplete = todos.filter(todo => todo.completedAt == null);
 $: completed = todos.filter(todo => todo.completedAt != null);
 
@@ -19,32 +29,26 @@ $: todos.sort((a, b) => {
 	return 0;
 });
 
+// sync todos to store
+$: { if (todos[0]) todosStore.set(todos) };
+
 type Todo = typeof todos[0];
 let todo: Todo;
 
 type Tag = string;
 let tag: Tag;
 
-let date: string;
-let time: string;
+// variables
 
 
 
 let name: string = 'test';
 $: name = data.feed?.name ? data.feed.name : 'test';
 
-// functions
-function displayDate(date: Date) {
-	const dateString = date.toLocaleString(); // e.g. 9/19/2021, 10:00:00 AM
-	const dateOnly = dateString.split(",")[0]; // e.g. 9/19/2021
-	const timeString = dateString.split(",")[1].trim(); // e.g. 10:00:00 AM
-	const timeOnly = timeString.split(" ")[0]; // e.g. 10:00:00
-	const timeNoSeconds = timeString.split(":").slice(0, 2).join(":"); // e.g. 10:00
-	const amPm = timeString.split(" ")[1]; // e.g. AM
+// let todos: Todo[] (data.feed.todos) = [];
+// $: todos = data.feed?.todos ? data.feed.todos : [];
 
-
-	return [dateOnly, timeNoSeconds, amPm] as string[];
-}
+// $:console.log(todos)
 
 
 </script>
@@ -60,45 +64,38 @@ function displayDate(date: Date) {
 
 	//- body
 	main.relative.grid.min-h-screen.bg-primary.p-4.pb-48.text-white.px-8.py-8
-		div.w-full
-			//- welcome message
-			.mb-4 Welcome, {name}!
-			.grid.grid-cols-2.w-full.gap-8
+		div(class="sm:max-w-lg lg:max-w-xl xl:max-w-2xl")
 
+			.text-center(class="sm:text-left")
 
+				//- welcome message
+				.div
+					.mb-4 Welcome, {name}!
 
 				//- todos
 				//- incomplete
-
-				.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
-					div.mb-8.font-semibold all incomplete todos
+				.border-t.border-white.border-opacity-40.mt-8.pt-8
+					.flex.mb-8.justify-between
+						div.font-semibold to do today
+						a.text-13(href="/create" class="inline-block py-2 px-2 rounded outline-white outline leading-none") + Create Todo
 					+each('incomplete as todo, index (todo.id)')
 						+const('tags = todo.tags ? todo.tags.split(",") : []')
 						div
-							+if('!todo.archived')
+							+if('!todo.archived && todo.today')
 								.mb-4
 									.inline-block.mr-2 {todo.order}.
 									.inline-block.mr-2 {todo.description}
 									+each('tags as tag')
 										span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
-				.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
-					div.mb-8.font-semibold recently completed
+				div.border-t.border-white.border-opacity-40.mt-8.pt-8
+					div.mb-8.font-semibold completed today
 					+each('completed as todo, index (todo.id)')
 						+const('tags = todo.tags ? todo.tags.split(",") : []')
-						+if('todo.archived != true')
+						+if('todo.archived != true && new Date(todo.completedAt).toDateString() == new Date().toDateString()')
 							.mb-4
 								.inline-block.mr-2.line-through {todo.description}
-								//- tags
 								+each('tags as tag')
 									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
-								//- completed date
-								+if('todo.completedAt')
-									+const('dateTime = displayDate(todo.completedAt)')
-									+const('date = dateTime[0]')
-									+const('time = dateTime[1]')
-									+const('amPm = dateTime[2]')
-									span.inline-block.py-1.px-2.rounded.leading-none.ml-3.text-13
-										|	{date} {time} {amPm}
 
 
 

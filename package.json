@@ -1,6 +1,6 @@
 {
   "author": "Kevin Peckham",
-  "name": "Toods - Sidetest",
+  "name": "toods-with-db",
   "version": "0.0.1",
   "devDependencies": {
     "@playwright/test": "^1.33.0",

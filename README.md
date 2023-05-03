@@ -22,3 +22,8 @@
 - Optional timer on todos?
 - Optional pomodoro timer?
 - Optional time tracking?
+- Time to stretch / move around
+- integration with other apps (calendar, etc)
+- integration with raycast
+- confetti on todo completion
+- today view: keep crossed out items
