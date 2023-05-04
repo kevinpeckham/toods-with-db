@@ -1,5 +1,13 @@
 <!-- Example Svelte Page / Starter Web Page-->
 <script lang="ts">
+// components
+import EditLink from "$atoms/EditLink.svelte";
+import Header from "$organisms/Header.svelte";
+import TagsBlock from "$atoms/TagsBlock.svelte";
+import DeleteButton from "$atoms/DeleteButton.svelte";
+import FieldTodoId from "$atoms/FieldTodoId.svelte";
+
+// types
 import type { PageData } from "./$types";
 export let data: PageData;
 
@@ -65,17 +73,13 @@ function isScheduledForToday(todo:Todo) {
 		)
 
 	//- body
-	main.relative.grid.min-h-screen.bg-primary.p-4.pb-48.text-white.px-8.py-8
-		div.w-full
-			//- welcome message
-			.flex.justify-between
-				.mb-4 Welcome, {name}!
-				div: a.text-13(href="/create" class="inline-block py-2 px-2 rounded outline-white outline leading-none") + Create Todo
+	Header(name!="{name}")
+	main.relative.grid.bg-primary.p-4.pb-48.text-white.px-8(style="min-height:calc(100vh - 4rem);")
 
 			//- body
 			.grid.grid-cols-2.w-full.gap-8
 				//- incomplete - today
-				.border-t.border-white.border-opacity-40.mt-8.pt-8
+				.border-t.border-white.border-opacity-40.mt-0.pt-8
 					.flex.mb-8.justify-between
 						div.font-semibold to do -
 							a.inline-block.ml-2.underline.underline-offset-4(href="/today") today
@@ -85,35 +89,32 @@ function isScheduledForToday(todo:Todo) {
 						div
 							+if('!todo.archived && isScheduledForToday(todo)')
 								form(method="post" class="actions").mb-4
-									input.text-primary.text-13(
-										class="inline-block.mr-2",
-										name!="id",
-										hidden
-										id!="id-{todo.id}"
-										type="text",
+									FieldTodoId(
 										value!="{todo.id}"
-									)
+										hidden!="{true}")
+									//- order
 									.inline-block.mr-2 {todo.order}.
+									//- description
 									.inline-block.mr-2 {todo.description}
 									//- tags
-									.inline-block.mr-4
-										+each('tags as tag')
-											span.inline-block.py-1.px-2.rounded.border-white.border.leading-none.ml-3.text-12(class="border-[1px]") {tag}
+									TagsBlock(tags!="{todo.tags.split(',')}")
 									//- edit
-									a.inline-block.py-1.px-2.leading-none.mr-2.text-13(class="hover:text-accent underline underline-offset-4 opacity-80 hover:opacity-100" href="/t/{todo.id}") edit
+									EditLink(todoId!="{todo.id}")
 									//- delete
-									button.inline-block.back.underline.underline-offset-4.text-13(class="hover:text-accent opacity-80 hover:opacity-100" formaction="?/deleteTodo" type="submit") delete
+									DeleteButton
 
 				//- completed today
-				.border-t.border-white.border-opacity-40.mt-8.pt-8
+				.border-t.border-white.border-opacity-40.pt-8
 					div.mb-8.font-semibold completed today
 					+each('completed as todo, index (todo.id)')
 						+const('tags = todo.tags ? todo.tags.split(",") : []')
 						+if('todo.archived != true && new Date(todo.completedAt).toDateString() == new Date().toDateString()')
 							.mb-4
 								.inline-block.mr-2.line-through {todo.description}
+								//- tags
 								+each('tags as tag')
 									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
+								EditLink(todoId!="{todo.id}")
 
 				//- todos
 				//- incomplete  todos not assigned to today
@@ -129,6 +130,7 @@ function isScheduledForToday(todo:Todo) {
 									.inline-block.mr-2 {todo.description}
 									+each('tags as tag')
 										span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
+									EditLink(todoId!="{todo.id}")
 				.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
 					div.mb-8.font-semibold recently completed
 					+each('completed as todo, index (todo.id)')
@@ -137,16 +139,19 @@ function isScheduledForToday(todo:Todo) {
 							.mb-4
 								.inline-block.mr-2.line-through {todo.description}
 								//- tags
-								+each('tags as tag')
-									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
+								.inline-block.mr-4
+									+each('tags as tag')
+										span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
 								//- completed date
 								+if('todo.completedAt')
 									+const('dateTime = displayDate(todo.completedAt)')
 									+const('date = dateTime[0]')
 									+const('time = dateTime[1]')
 									+const('amPm = dateTime[2]')
-									span.inline-block.py-1.px-2.rounded.leading-none.ml-3.text-13
+									span.inline-block.py-1.px-2.rounded.leading-none.ml-0.text-13
 										|	{date} {time} {amPm}
+									//- edit
+									EditLink(todoId!="{todo.id}")
 
 
 

@@ -115,6 +115,7 @@ export const actions = {
 		if (
 			typeof order != "number" ||
 			typeof description != "string" ||
+			description.length > 300 ||
 			typeof userId != "string" ||
 			typeof tags != "string" ||
 			userId.length != 16) {

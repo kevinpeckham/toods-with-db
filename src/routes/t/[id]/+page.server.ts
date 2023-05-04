@@ -11,13 +11,75 @@ import { fail, redirect } from '@sveltejs/kit';
 
 // types
 import type { Actions, PageServerLoad } from './$types';
+import type { PageParentData } from "./$types";
 
 // store functions
 import { writable, get } from 'svelte/store';
 
-// types
-import type { PageParentData } from "./$types";
-
+// local functions
+function convertDateInputToISOString(date: string) {
+	return new Date(date).toISOString();
+}
+function completedAtFieldValue(data:FormData) {
+	if (data.get("completedAt") == "null" || data.get("completedAt") == "" || data.get("completedAt") == undefined) {
+		return null
+	} else {
+		const value = data.get("completedAt");
+		if (typeof value == "string") {
+			const dateTime =  convertDateInputToISOString(value)
+			if (dateTime == "Invalid Date") {
+				return null
+			}
+			else return dateTime
+		}
+		else return null;
+	}
+}
+function dueAtFieldValue(data:FormData) {
+	const value = data.get("dueAt");
+	if (value == "null" || value == "" || value == undefined) {
+		return null
+	} else {
+		if (typeof value == "string") {
+			const dateTime =  convertDateInputToISOString(value)
+			if (dateTime == "Invalid Date") {
+				return null
+			}
+			else return dateTime
+		}
+		else return null;
+	}
+}
+function scheduledToStartAtFieldValue(data:FormData) {
+	const value = data.get("scheduledToStartAt");
+	if (value == "null" || value == "" || value == undefined) {
+		return null
+	} else {
+		if (typeof value == "string") {
+			const dateTime =  convertDateInputToISOString(value)
+			if (dateTime == "Invalid Date") {
+				return null
+			}
+			else return dateTime
+		}
+		else return null;
+	}
+}
+function scheduledToEndAtFieldValue(data:FormData) {
+	const value = data.get("scheduledToEndAt");
+	if (value == "null" || value == "" || value == undefined) {
+		return null
+	} else {
+		if (typeof value == "string") {
+			const dateTime =  convertDateInputToISOString(value)
+			if (dateTime == "Invalid Date") {
+				return null
+			}
+			else return dateTime
+		}
+		else return null;
+	}
+}
 
 let id:string;
 
@@ -44,6 +106,11 @@ export const actions = {
 		const priority = data.get("priority") ? Number(data.get("priority")) : 0
 		const friction = data.get("friction") ? Number(data.get("friction")) : 0
 		const joy = data.get("joy") ? Number(data.get("joy")) : 0
+		const completedAt = completedAtFieldValue(data);
+		const dueAt = dueAtFieldValue(data);
+		const scheduledToStartAt = scheduledToStartAtFieldValue(data);
+		const scheduledToEndAt = scheduledToEndAtFieldValue(data);
+
 
 		console.log({ order, description, userId, tags, next, priority, friction, joy })
 
@@ -63,18 +130,37 @@ export const actions = {
 			return fail(400, { incorrect: true })
 	 	}
 
+		 const datum = {
+			completedAt: completedAt,
+			dueAt: dueAt,
+			next: next,
+			order: completedAt ? -1 : order, // if completedAt is set, set order to -1
+			priority: priority,
+			friction: friction,
+			joy: joy,
+			description: description,
+			scheduledToStartAt: scheduledToStartAt,
+			scheduledToEndAt: scheduledToEndAt,
+			tags: tags,
+			user: { connect: { id: userId } }
+		};
+
 	//
 		await prisma.todo.update({
 			where: { id: id },
 			data: {
+				completedAt: completedAt,
+				dueAt: dueAt,
 				next: next,
 				order: order,
 				priority: priority,
 				friction: friction,
 				joy: joy,
 				description: description,
+				scheduledToStartAt: scheduledToStartAt,
+				scheduledToEndAt: scheduledToEndAt,
 				tags: tags,
-				user: { connect: { id: userId } }
+				// user: { connect: { id: userId } }
 			},
 		});
 

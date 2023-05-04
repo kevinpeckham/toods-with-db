@@ -28,6 +28,12 @@
 		new Date(response?.scheduledToStartAt).toISOString().split('.')[0] :
 		null;
 
+	// scheduled to end at
+	let scheduledToEndAt: string | null;
+	$: scheduledToEndAt = response?.scheduledToEndAt ?
+		new Date(response?.scheduledToEndAt).toISOString().split('.')[0] :
+		null;
+
 
 </script>
 
@@ -148,7 +154,7 @@ div.px-8.py-8.bg-primary.min-h-screen.text-white
 		.flex.gap-x-4
 			//- Scheduled to start at
 			div
-				label.mb-2.leading-none.flex.items-center(for="completedAt") Scheduled - Starting at:
+				label.mb-2.leading-none.flex.items-center(for="scheduledToStartAt") Scheduled - Starting at:
 				input#scheduledToStartAt.w-48(
 						value!="{scheduledToStartAt}"
 						class="!mb-6"
@@ -158,13 +164,13 @@ div.px-8.py-8.bg-primary.min-h-screen.text-white
 						)
 			div
 				//- Scheduled to start at
-				label.mb-2.leading-none.flex.items-center(for="completedAt") Scheduled - Finishing at
-				input#scheduledToStartAt.w-48(
-						value!="{scheduledToStartAt}"
+				label.mb-2.leading-none.flex.items-center(for="scheduledToEndAt") Scheduled - Finishing at
+				input#scheduledToEndAt.w-48(
+						value!="{scheduledToEndAt}"
 						class="!mb-6"
 						type="datetime-local"
 						default="now"
-						name="scheduledToStartAt"
+						name="scheduledToEndAt"
 						)
 		//- completedAt
 		label.mb-2.leading-none.flex.items-center(for="completedAt") Was Completed At
