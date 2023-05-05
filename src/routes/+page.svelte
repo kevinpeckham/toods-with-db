@@ -5,7 +5,10 @@
 	import Header from "$organisms/Header.svelte";
 	import TagsBlock from "$atoms/TagsBlock.svelte";
 	import DeleteButton from "$atoms/DeleteButton.svelte";
+	import CompleteButton from "$atoms/CompleteButton.svelte";
 	import FieldTodoId from "$atoms/FieldTodoId.svelte";
+
+
 
 	// types
 	import type { PageData } from "./$types";
@@ -87,16 +90,22 @@
 									hidden!="{ true }",
 									value!="{ todo.id }"
 								)
-								//- order
-								.inline-block.mr-2 { todo.order }.
-								//- description
-								.inline-block.mr-2 { todo.description }
-								//- tags
-								TagsBlock(tags!="{ todo.tags.split(',') }")
-								//- edit
-								EditLink(todoId!="{ todo.id }")
-								//- delete
-								DeleteButton
+								.flex.items-center.gap-4
+									CompleteButton
+
+									//- number & description
+									.flex.items-center.gap-2
+										.inline-block { todo.order }.
+										.whitespace-nowrap { todo.description }
+
+									//- tags
+									TagsBlock(tags!="{ todo.tags.split(',') }")
+
+									//- styled as links
+									.flex.gap-2.items-center
+										EditLink(todoId!="{ todo.id }")
+										DeleteButton
+
 
 			//- completed today
 			.border-t.border-white.border-opacity-40.pt-8
@@ -126,6 +135,8 @@
 								+each('tags as tag')
 									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 { tag }
 								EditLink(todoId!="{ todo.id }")
+
+
 			.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
 				.mb-8.font-semibold recently completed
 				+each('completed as todo, index (todo.id)')

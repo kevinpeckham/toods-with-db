@@ -33,8 +33,6 @@ export const actions = {
 		const data = await request.formData();
 		const id = data.get("id") ? data.get("id") : null;
 
-		console.log(id);
-
 		// make sure required fields are present
 		if (!id) {
 			return fail(400, { id, missing: true });
@@ -47,6 +45,31 @@ export const actions = {
 
 		await prisma.todo.delete({
 			where: { id: id },
+		});
+
+		throw redirect(303, `/`);
+	},
+	completeTodo: async ({ request }) => {
+		const data = await request.formData();
+		const id = data.get("id") ? data.get("id") : null;
+
+		// make sure required fields are present
+		if (!id) {
+			return fail(400, { id, missing: true });
+		}
+
+		// make sure fields are the right type
+		if (typeof id != "string") {
+			return fail(400, { incorrect: true });
+		}
+
+		await prisma.todo.update({
+			where: { id: id },
+			data: {
+				next: false,
+				order: -1,
+				completedAt: new Date().toISOString(),
+			}
 		});
 
 		throw redirect(303, `/`);
