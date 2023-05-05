@@ -1,3 +1,9 @@
+// Serverless Functions
+/** @type {import('@sveltejs/adapter-vercel').Config} */
+export const config = {
+	runtime: 'nodejs18.x'
+};
+
 // src/routes/create/+page.server.ts
 
 // import prisma
