@@ -4,86 +4,82 @@
 import prisma from "$lib/prisma";
 
 // import nanoid for generating unique ids
-import { nanoid } from 'nanoid';
+import { nanoid } from "nanoid";
 
 // import functions from sveltekit
-import { fail, redirect } from '@sveltejs/kit';
+import { fail, redirect } from "@sveltejs/kit";
 
 // store functions
-import { get } from 'svelte/store';
+import { get } from "svelte/store";
 
 // user data from store
-import { activeUserId } from '$stores/activeUser';
-const userId = get(activeUserId)
+import { activeUserId } from "$stores/activeUser";
+const userId = get(activeUserId);
 
 // types
-import type { Actions } from './$types';
+import type { Actions } from "./$types";
 
 // local functions
 function convertDateInputToISOString(date: string) {
 	return new Date(date).toISOString();
 }
-function completedAtFieldValue(data:FormData) {
-	if (data.get("completedAt") == "null" || data.get("completedAt") == "" || data.get("completedAt") == undefined) {
-		return null
+function completedAtFieldValue(data: FormData) {
+	if (
+		data.get("completedAt") == "null" ||
+		data.get("completedAt") == "" ||
+		data.get("completedAt") == undefined
+	) {
+		return null;
 	} else {
 		const value = data.get("completedAt");
 		if (typeof value == "string") {
-			const dateTime =  convertDateInputToISOString(value)
+			const dateTime = convertDateInputToISOString(value);
 			if (dateTime == "Invalid Date") {
-				return null
-			}
-			else return dateTime
-		}
-		else return null;
+				return null;
+			} else return dateTime;
+		} else return null;
 	}
 }
 
-function dueAtFieldValue(data:FormData) {
+function dueAtFieldValue(data: FormData) {
 	const value = data.get("dueAt");
 	if (value == "null" || value == "" || value == undefined) {
-		return null
+		return null;
 	} else {
 		if (typeof value == "string") {
-			const dateTime =  convertDateInputToISOString(value)
+			const dateTime = convertDateInputToISOString(value);
 			if (dateTime == "Invalid Date") {
-				return null
-			}
-			else return dateTime
-		}
-		else return null;
+				return null;
+			} else return dateTime;
+		} else return null;
 	}
 }
 
-function scheduledToStartAtFieldValue(data:FormData) {
+function scheduledToStartAtFieldValue(data: FormData) {
 	const value = data.get("scheduledToStartAt");
 	if (value == "null" || value == "" || value == undefined) {
-		return null
+		return null;
 	} else {
 		if (typeof value == "string") {
-			const dateTime =  convertDateInputToISOString(value)
+			const dateTime = convertDateInputToISOString(value);
 			if (dateTime == "Invalid Date") {
-				return null
-			}
-			else return dateTime
-		}
-		else return null;
+				return null;
+			} else return dateTime;
+		} else return null;
 	}
 }
 
-function scheduledToEndAtFieldValue(data:FormData) {
+function scheduledToEndAtFieldValue(data: FormData) {
 	const value = data.get("scheduledToEndAt");
 	if (value == "null" || value == "" || value == undefined) {
-		return null
+		return null;
 	} else {
 		if (typeof value == "string") {
-			const dateTime =  convertDateInputToISOString(value)
+			const dateTime = convertDateInputToISOString(value);
 			if (dateTime == "Invalid Date") {
-				return null
-			}
-			else return dateTime
-		}
-		else return null;
+				return null;
+			} else return dateTime;
+		} else return null;
 	}
 }
 
@@ -104,8 +100,6 @@ export const actions = {
 		const scheduledToStartAt = scheduledToStartAtFieldValue(data);
 		const scheduledToEndAt = scheduledToEndAtFieldValue(data);
 
-
-
 		// 2.
 		if (!description || !userId) {
 			return fail(400, { description, userId, missing: true });
@@ -118,8 +112,9 @@ export const actions = {
 			description.length > 300 ||
 			typeof userId != "string" ||
 			typeof tags != "string" ||
-			userId.length != 16) {
-			return fail(400, { incorrect: true })
+			userId.length != 16
+		) {
+			return fail(400, { incorrect: true });
 		}
 
 		const datum = {
@@ -136,17 +131,16 @@ export const actions = {
 			scheduledToStartAt: scheduledToStartAt,
 			scheduledToEndAt: scheduledToEndAt,
 			tags: tags,
-			user: { connect: { id: userId } }
+			user: { connect: { id: userId } },
 		};
 
-		console.log(datum)
-
+		console.log(datum);
 
 		await prisma.todo.create({
-			data: datum
+			data: datum,
 		});
 
 		//5.
-		throw redirect(303, `/today`)
-	}
+		throw redirect(303, `/today`);
+	},
 } satisfies Actions;

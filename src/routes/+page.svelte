@@ -1,66 +1,59 @@
 <!-- Example Svelte Page / Starter Web Page-->
 <script lang="ts">
-// components
-import EditLink from "$atoms/EditLink.svelte";
-import Header from "$organisms/Header.svelte";
-import TagsBlock from "$atoms/TagsBlock.svelte";
-import DeleteButton from "$atoms/DeleteButton.svelte";
-import FieldTodoId from "$atoms/FieldTodoId.svelte";
+	// components
+	import EditLink from "$atoms/EditLink.svelte";
+	import Header from "$organisms/Header.svelte";
+	import TagsBlock from "$atoms/TagsBlock.svelte";
+	import DeleteButton from "$atoms/DeleteButton.svelte";
+	import FieldTodoId from "$atoms/FieldTodoId.svelte";
 
-// types
-import type { PageData } from "./$types";
-export let data: PageData;
+	// types
+	import type { PageData } from "./$types";
+	export let data: PageData;
 
+	type Feed = typeof data.feed;
+	$: feed = data.feed as Feed;
 
-type Feed = typeof data.feed;
-$:feed = data.feed as Feed;
+	$: todos = feed?.todos ?? [];
+	$: incomplete = todos.filter((todo) => todo.completedAt == null);
+	$: completed = todos.filter((todo) => todo.completedAt != null);
 
+	//- sort by order
+	$: todos.sort((a, b) => {
+		if (a.order > b.order) return 1;
+		if (a.order < b.order) return -1;
+		return 0;
+	});
 
-$:todos = feed?.todos ?? [];
-$: incomplete = todos.filter(todo => todo.completedAt == null);
-$: completed = todos.filter(todo => todo.completedAt != null);
+	type Todo = (typeof todos)[0];
+	let todo: Todo;
 
-//- sort by order
-$: todos.sort((a, b) => {
-	if (a.order > b.order) return 1;
-	if (a.order < b.order) return -1;
-	return 0;
-});
+	type Tag = string;
+	let tag: Tag;
 
-type Todo = typeof todos[0];
-let todo: Todo;
+	let date: string;
+	let time: string;
 
-type Tag = string;
-let tag: Tag;
+	let name = "test";
+	$: name = data.feed?.name ? data.feed.name : "test";
 
-let date: string;
-let time: string;
+	// functions
+	function displayDate(date: Date) {
+		const dateString = date.toLocaleString(); // e.g. 9/19/2021, 10:00:00 AM
+		const dateOnly = dateString.split(",")[0]; // e.g. 9/19/2021
+		const timeString = dateString.split(",")[1].trim(); // e.g. 10:00:00 AM
+		const timeOnly = timeString.split(" ")[0]; // e.g. 10:00:00
+		const timeNoSeconds = timeString.split(":").slice(0, 2).join(":"); // e.g. 10:00
+		const amPm = timeString.split(" ")[1]; // e.g. AM
 
-
-
-let name: string = 'test';
-$: name = data.feed?.name ? data.feed.name : 'test';
-
-// functions
-function displayDate(date: Date) {
-	const dateString = date.toLocaleString(); // e.g. 9/19/2021, 10:00:00 AM
-	const dateOnly = dateString.split(",")[0]; // e.g. 9/19/2021
-	const timeString = dateString.split(",")[1].trim(); // e.g. 10:00:00 AM
-	const timeOnly = timeString.split(" ")[0]; // e.g. 10:00:00
-	const timeNoSeconds = timeString.split(":").slice(0, 2).join(":"); // e.g. 10:00
-	const amPm = timeString.split(" ")[1]; // e.g. AM
-
-
-	return [dateOnly, timeNoSeconds, amPm] as string[];
-}
-function isScheduledForToday(todo:Todo) {
-	const today = new Date().toLocaleString().split(',')[0];
-	const scheduled = todo?.scheduledToStartAt?.toLocaleString().split(',')[0];
-	if (scheduled == today) return true;
-	else return false;
-}
-
-
+		return [dateOnly, timeNoSeconds, amPm] as string[];
+	}
+	function isScheduledForToday(todo: Todo) {
+		const today = new Date().toLocaleString().split(",")[0];
+		const scheduled = todo?.scheduledToStartAt?.toLocaleString().split(",")[0];
+		if (scheduled == today) return true;
+		else return false;
+	}
 </script>
 
 <template lang="pug">
@@ -73,86 +66,85 @@ function isScheduledForToday(todo:Todo) {
 		)
 
 	//- body
-	Header(name!="{name}")
-	main.relative.grid.bg-primary.p-4.pb-48.text-white.px-8(style="min-height:calc(100vh - 4rem);")
+	Header(name!="{ name }")
+	main.relative.grid.bg-primary.p-4.pb-48.text-white.px-8(
+		style="min-height: calc(100vh - 4rem)"
+	)
+		//- body
+		.grid.grid-cols-2.w-full.gap-8
+			//- incomplete - today
+			.border-t.border-white.border-opacity-40.mt-0.pt-8
+				.flex.mb-8.justify-between
+					.font-semibold to do -
+						a.inline-block.ml-2.underline.underline-offset-4(href="/today") today
 
-			//- body
-			.grid.grid-cols-2.w-full.gap-8
-				//- incomplete - today
-				.border-t.border-white.border-opacity-40.mt-0.pt-8
-					.flex.mb-8.justify-between
-						div.font-semibold to do -
-							a.inline-block.ml-2.underline.underline-offset-4(href="/today") today
-
-					+each('incomplete as todo, index (todo.id)')
-						+const('tags = todo.tags ? todo.tags.split(",") : []')
-						div
-							+if('!todo.archived && isScheduledForToday(todo)')
-								form(method="post" class="actions").mb-4
-									FieldTodoId(
-										value!="{todo.id}"
-										hidden!="{true}")
-									//- order
-									.inline-block.mr-2 {todo.order}.
-									//- description
-									.inline-block.mr-2 {todo.description}
-									//- tags
-									TagsBlock(tags!="{todo.tags.split(',')}")
-									//- edit
-									EditLink(todoId!="{todo.id}")
-									//- delete
-									DeleteButton
-
-				//- completed today
-				.border-t.border-white.border-opacity-40.pt-8
-					div.mb-8.font-semibold completed today
-					+each('completed as todo, index (todo.id)')
-						+const('tags = todo.tags ? todo.tags.split(",") : []')
-						+if('todo.archived != true && new Date(todo.completedAt).toDateString() == new Date().toDateString()')
-							.mb-4
-								.inline-block.mr-2.line-through {todo.description}
+				+each('incomplete as todo, index (todo.id)')
+					+const('tags = todo.tags ? todo.tags.split(",") : []')
+					div
+						+if('!todo.archived && isScheduledForToday(todo)')
+							form.mb-4(class="actions", method="post")
+								FieldTodoId(
+									hidden!="{ true }",
+									value!="{ todo.id }"
+								)
+								//- order
+								.inline-block.mr-2 { todo.order }.
+								//- description
+								.inline-block.mr-2 { todo.description }
 								//- tags
+								TagsBlock(tags!="{ todo.tags.split(',') }")
+								//- edit
+								EditLink(todoId!="{ todo.id }")
+								//- delete
+								DeleteButton
+
+			//- completed today
+			.border-t.border-white.border-opacity-40.pt-8
+				.mb-8.font-semibold completed today
+				+each('completed as todo, index (todo.id)')
+					+const('tags = todo.tags ? todo.tags.split(",") : []')
+					+if('todo.archived != true && new Date(todo.completedAt).toDateString() == new Date().toDateString()')
+						.mb-4
+							.inline-block.mr-2.line-through { todo.description }
+							//- tags
+							+each('tags as tag')
+								span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 { tag }
+							EditLink(todoId!="{ todo.id }")
+
+			//- todos
+			//- incomplete  todos not assigned to today
+
+			.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
+				.mb-8.font-semibold incomplete todos - not scheduled for today
+				+each('incomplete as todo, index (todo.id)')
+					+const('tags = todo.tags ? todo.tags.split(",") : []')
+					div
+						+if('!todo.archived && !isScheduledForToday(todo)')
+							.mb-4
+								.inline-block.mr-2 { todo.order }.
+								.inline-block.mr-2 { todo.description }
 								+each('tags as tag')
-									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
-								EditLink(todoId!="{todo.id}")
-
-				//- todos
-				//- incomplete  todos not assigned to today
-
-				.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
-					div.mb-8.font-semibold incomplete todos - not scheduled for today
-					+each('incomplete as todo, index (todo.id)')
-						+const('tags = todo.tags ? todo.tags.split(",") : []')
-						div
-							+if('!todo.archived && !isScheduledForToday(todo)')
-								.mb-4
-									.inline-block.mr-2 {todo.order}.
-									.inline-block.mr-2 {todo.description}
-									+each('tags as tag')
-										span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
-									EditLink(todoId!="{todo.id}")
-				.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
-					div.mb-8.font-semibold recently completed
-					+each('completed as todo, index (todo.id)')
-						+const('tags = todo.tags ? todo.tags.split(",") : []')
-						+if('todo.archived != true')
-							.mb-4
-								.inline-block.mr-2.line-through {todo.description}
-								//- tags
-								.inline-block.mr-4
-									+each('tags as tag')
-										span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 {tag}
-								//- completed date
-								+if('todo.completedAt')
-									+const('dateTime = displayDate(todo.completedAt)')
-									+const('date = dateTime[0]')
-									+const('time = dateTime[1]')
-									+const('amPm = dateTime[2]')
-									span.inline-block.py-1.px-2.rounded.leading-none.ml-0.text-13
-										|	{date} {time} {amPm}
-									//- edit
-									EditLink(todoId!="{todo.id}")
-
-
-
+									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 { tag }
+								EditLink(todoId!="{ todo.id }")
+			.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
+				.mb-8.font-semibold recently completed
+				+each('completed as todo, index (todo.id)')
+					+const('tags = todo.tags ? todo.tags.split(",") : []')
+					+if('todo.archived != true')
+						.mb-4
+							.inline-block.mr-2.line-through { todo.description }
+							//- tags
+							.inline-block.mr-4
+								+each('tags as tag')
+									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 { tag }
+							//- completed date
+							+if('todo.completedAt')
+								+const('dateTime = displayDate(todo.completedAt)')
+								+const('date = dateTime[0]')
+								+const('time = dateTime[1]')
+								+const('amPm = dateTime[2]')
+								span.inline-block.py-1.px-2.rounded.leading-none.ml-0.text-13
+									| { date } { time } { amPm }
+								//- edit
+								EditLink(todoId!="{ todo.id }")
 </template>
