@@ -7,9 +7,11 @@ Here's some documentation for this component.
 </script>
 
 <template lang="pug">
-	button.inline-block.back.underline.underline-offset-4.leading-none(
+	button.inline-block.back.underline.underline-offset-4.leading-none.flex.items-center.group(
 		class="hover:text-accent opacity-80 hover:opacity-100",
-		formaction="?/deleteTodo",
+		aria-label="Add to today",
+		formaction="?/moveToToday",
+		title="Add to today",
 		type="submit"
-	) delete
+	) → today
 </template>

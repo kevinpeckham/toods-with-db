@@ -1,6 +1,6 @@
 /** @type {import('@sveltejs/adapter-vercel').Config} */
 export const config = {
-	runtime: 'nodejs18.x'
+	runtime: "nodejs18.x",
 };
 
 // import prisma
@@ -69,7 +69,31 @@ export const actions = {
 				next: false,
 				order: -1,
 				completedAt: new Date().toISOString(),
-			}
+			},
+		});
+
+		throw redirect(303, `/`);
+	},
+
+	moveToToday: async ({ request }) => {
+		const data = await request.formData();
+		const id = data.get("id") ? data.get("id") : null;
+
+		// make sure required fields are present
+		if (!id) {
+			return fail(400, { id, missing: true });
+		}
+
+		// make sure fields are the right type
+		if (typeof id != "string") {
+			return fail(400, { incorrect: true });
+		}
+
+		await prisma.todo.update({
+			where: { id: id },
+			data: {
+				scheduledToStartAt: new Date().toISOString(),
+			},
 		});
 
 		throw redirect(303, `/`);

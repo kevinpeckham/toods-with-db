@@ -1,6 +1,6 @@
 /** @type {import('@sveltejs/adapter-vercel').Config} */
 export const config = {
-	runtime: 'nodejs18.x'
+	runtime: "nodejs18.x",
 };
 
 // import prisma

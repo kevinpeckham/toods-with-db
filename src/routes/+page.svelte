@@ -1,4 +1,4 @@
-<!-- Example Svelte Page / Starter Web Page-->
+<!-- Perhaps the load function on this page should only load incomplete todos ??-->
 <script lang="ts">
 	// components
 	import EditLink from "$atoms/EditLink.svelte";
@@ -7,28 +7,29 @@
 	import DeleteButton from "$atoms/DeleteButton.svelte";
 	import CompleteButton from "$atoms/CompleteButton.svelte";
 	import FieldTodoId from "$atoms/FieldTodoId.svelte";
-
-
+	import TodosList from "$molecules/TodosList.svelte";
 
 	// types
 	import type { PageData } from "./$types";
+	import type { Todo } from "@prisma/client";
 	export let data: PageData;
 
-	type Feed = typeof data.feed;
-	$: feed = data.feed as Feed;
+	// utils
+	import { getTomorrowDate } from "$utils/dateUtils";
 
-	$: todos = feed?.todos ?? [];
+	let todos: Todo[];
+	$: todos = data?.feed?.todos ?? [];
 	$: incomplete = todos.filter((todo) => todo.completedAt == null);
 	$: completed = todos.filter((todo) => todo.completedAt != null);
 
 	//- sort by order
-	$: todos.sort((a, b) => {
-		if (a.order > b.order) return 1;
-		if (a.order < b.order) return -1;
-		return 0;
-	});
+	// $: todos.sort((a, b) => {
+	// 	if (a.order > b.order) return 1;
+	// 	if (a.order < b.order) return -1;
+	// 	return 0;
+	// });
 
-	type Todo = (typeof todos)[0];
+
 	let todo: Todo;
 
 	type Tag = string;
@@ -51,12 +52,7 @@
 
 		return [dateOnly, timeNoSeconds, amPm] as string[];
 	}
-	function isScheduledForToday(todo: Todo) {
-		const today = new Date().toLocaleString().split(",")[0];
-		const scheduled = todo?.scheduledToStartAt?.toLocaleString().split(",")[0];
-		if (scheduled == today) return true;
-		else return false;
-	}
+
 </script>
 
 <template lang="pug">
@@ -75,87 +71,68 @@
 	)
 		//- body
 		.grid.grid-cols-2.w-full.gap-8
-			//- incomplete - today
-			.border-t.border-white.border-opacity-40.mt-0.pt-8
-				.flex.mb-8.justify-between
-					.font-semibold to do -
+			div
+				//- scheduled for today
+				TodosList(
+					hideScheduledToStartAt!="{ true }",
+					showArchived!="{ false }",
+					showCompleted!="{ false }",
+					showScheduled!="{ true }",
+					showScheduledToStartOn!="{ new Date() }",
+					todos!="{ todos }"
+					)
+					.flex.mb-2 Scheduled for
 						a.inline-block.ml-2.underline.underline-offset-4(href="/today") today
 
-				+each('incomplete as todo, index (todo.id)')
-					+const('tags = todo.tags ? todo.tags.split(",") : []')
-					div
-						+if('!todo.archived && isScheduledForToday(todo)')
-							form.mb-4(class="actions", method="post")
-								FieldTodoId(
-									hidden!="{ true }",
-									value!="{ todo.id }"
-								)
-								.flex.items-center.gap-4
-									CompleteButton
+				//- scheduled for tomorrow
+				TodosList(
+					hideScheduledToStartAt!="{ true }",
+					showArchived!="{ false }",
+					showCompleted!="{ false }",
+					showScheduled!="{ true }",
+					showScheduledToStartOn!="{ getTomorrowDate() }",
+					todos!="{ todos }"
+					)
+					.flex.mb-2 Scheduled for tomorrow
 
-									//- number & description
-									.flex.items-center.gap-2
-										.inline-block { todo.order }.
-										.whitespace-nowrap { todo.description }
+				//- scheduled for the future
+				TodosList(
+					showArchived!="{ false }",
+					showCompleted!="{ false }",
+					showScheduledInFuture!="{ true }",
+					showScheduledInPast!="{ false }",
+					showScheduledToday!="{ false }",
+					showScheduledTomorrow!="{ false }",
+					showUnscheduled!="{ false }",
+					todos!="{ todos }"
+				)
+					.flex.mb-2 Scheduled for
+						a.inline-block.ml-2.underline.underline-offset-4(href="/") beyond tomorrow
 
-									//- tags
-									TagsBlock(tags!="{ todo.tags.split(',') }")
+			//- column 2
+			div
+				//- scheduled for the past
+				TodosList(
+					showArchived!="{ false }",
+					showCompleted!="{ false }",
+					showScheduled!="{ true }",
+					showScheduledInFuture!="{ false }",
+					showScheduledInPast!="{ true }",
+					showScheduledToday!="{ false }",
+					showUnscheduled!="{ false }",
+					todos!="{ todos }"
+					)
+					.flex.mb-2 Scheduled for
+						a.inline-block.ml-2.underline.underline-offset-4(href="/") the past
 
-									//- styled as links
-									.flex.gap-2.items-center
-										EditLink(todoId!="{ todo.id }")
-										DeleteButton
-
-
-			//- completed today
-			.border-t.border-white.border-opacity-40.pt-8
-				.mb-8.font-semibold completed today
-				+each('completed as todo, index (todo.id)')
-					+const('tags = todo.tags ? todo.tags.split(",") : []')
-					+if('todo.archived != true && new Date(todo.completedAt).toDateString() == new Date().toDateString()')
-						.mb-4
-							.inline-block.mr-2.line-through { todo.description }
-							//- tags
-							+each('tags as tag')
-								span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 { tag }
-							EditLink(todoId!="{ todo.id }")
-
-			//- todos
-			//- incomplete  todos not assigned to today
-
-			.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
-				.mb-8.font-semibold incomplete todos - not scheduled for today
-				+each('incomplete as todo, index (todo.id)')
-					+const('tags = todo.tags ? todo.tags.split(",") : []')
-					div
-						+if('!todo.archived && !isScheduledForToday(todo)')
-							.mb-4
-								.inline-block.mr-2 { todo.order }.
-								.inline-block.mr-2 { todo.description }
-								+each('tags as tag')
-									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 { tag }
-								EditLink(todoId!="{ todo.id }")
+				//- unscheduled
+				TodosList(
+					showArchived!="{ false }",
+					showCompleted!="{ false }",
+					showScheduled!="{ false }",
+					todos!="{ todos }"
+					)
+					.flex.mb-2 Unscheduled
 
 
-			.w-full.border-t.border-white.border-opacity-40.mt-8.pt-8
-				.mb-8.font-semibold recently completed
-				+each('completed as todo, index (todo.id)')
-					+const('tags = todo.tags ? todo.tags.split(",") : []')
-					+if('todo.archived != true')
-						.mb-4
-							.inline-block.mr-2.line-through { todo.description }
-							//- tags
-							.inline-block.mr-4
-								+each('tags as tag')
-									span.inline-block.py-1.px-2.rounded.outline-white.outline.leading-none.ml-3.text-13 { tag }
-							//- completed date
-							+if('todo.completedAt')
-								+const('dateTime = displayDate(todo.completedAt)')
-								+const('date = dateTime[0]')
-								+const('time = dateTime[1]')
-								+const('amPm = dateTime[2]')
-								span.inline-block.py-1.px-2.rounded.leading-none.ml-0.text-13
-									| { date } { time } { amPm }
-								//- edit
-								EditLink(todoId!="{ todo.id }")
 </template>
