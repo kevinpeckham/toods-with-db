@@ -11,5 +11,6 @@ Here's some documentation for this component.
 		class="hover:text-accent opacity-80 hover:opacity-100",
 		formaction="?/deleteTodo",
 		type="submit"
+		title="Delete todo"
 	) delete
 </template>

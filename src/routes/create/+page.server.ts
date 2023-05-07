@@ -147,6 +147,6 @@ export const actions = {
 		});
 
 		//5.
-		throw redirect(303, `/today`);
+		throw redirect(303, `/`);
 	},
 } satisfies Actions;

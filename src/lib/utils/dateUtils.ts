@@ -30,15 +30,7 @@ export function endOfDay(date: Date) {
 	);
 }
 export function startOfDay(date: Date) {
-	return new Date(
-		date.getFullYear(),
-		date.getMonth(),
-		date.getDate(),
-		0,
-		0,
-		0,
-		0,
-	);
+	return new Date(`${justDate(date)} 00:00:00`);
 }
 
 
@@ -53,6 +45,10 @@ export function isYesterday(date: Date) {
 	const yesterday = justDate(new Date(Date.now() - 86400000));
 	const formattedDate = justDate(date);
 	return yesterday == formattedDate;
+}
+
+export function add24Hours(date:Date) {
+	return new Date(date.getTime() + 86400000);
 }
 
 export function getDayOfWeek(date: Date) {
@@ -74,4 +70,15 @@ export function getDayOfWeek(date: Date) {
 	// 		return "Saturday";
 	// }
 	return days[day];
+}
+
+export function dayAndDateString(date: Date){
+	const dayOfWeek = getDayOfWeek(date);
+	const formattedDate =  date.toLocaleDateString().replace(/\//g, '.');
+	return `${dayOfWeek}, ${formattedDate}`;
+}
+
+export function newDayFromToday(days: number) {
+	const today = new Date();
+	return new Date(today.getTime() + 86400000 * days);
 }

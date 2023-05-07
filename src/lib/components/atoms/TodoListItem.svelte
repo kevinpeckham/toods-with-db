@@ -7,13 +7,22 @@ Here's some documentation for this component.
 	import { getContext } from "svelte";
 
 	// components
-	import FieldTodoId from "$atoms/FieldTodoId.svelte";
-	import CompleteButton from "$atoms/CompleteButton.svelte";
+
+	import ButtonComplete from "$atoms/ButtonComplete.svelte";
+	import ButtonDelete from "$atoms/ButtonDelete.svelte";
+	import ButtonMoveToNextDay from "./ButtonMoveToNextDay.svelte";
+	import ButtonMoveToToday from "./ButtonMoveToToday.svelte";
+	import ButtonUnschedule from "./ButtonUnschedule.svelte";
+
 	import TagsBlock from "$atoms/TagsBlock.svelte";
 	import EditLink from "$atoms/EditLink.svelte";
-	import DeleteButton from "$atoms/DeleteButton.svelte";
+
+	// Hidden Field Components
+	import FieldTodoId from "$atoms/FieldTodoId.svelte";
+	import FieldScheduledToStartAt from "$atoms/FieldScheduledToStart.svelte";
+
 	import ScheduledStartBlock from "$atoms/ScheduledStartBlock.svelte";
-	import MoveToTodayButton from "./MoveToTodayButton.svelte";
+
 
 	// types from the Prisma schema
 	import type { Todo } from "@prisma/client";
@@ -22,7 +31,7 @@ Here's some documentation for this component.
 	export let todo: Todo;
 
 	// variables
-	$: hideScheduledToStartAt = getContext("hideScheduledToStartAt") as boolean;
+	$: hideStartValue = getContext("hideStartValue") as boolean;
 
 	// utils
 	import { isToday } from "$utils/dateUtils";
@@ -37,25 +46,42 @@ Here's some documentation for this component.
 			hidden!="{ true }",
 			value!="{ todo.id }"
 		)
+		FieldScheduledToStartAt(
+			hidden!="{ true }",
+			value!="{ todo.scheduledToStartAt }"
+		)
 		.flex.items-center.gap-4
-			CompleteButton
+			+if('!todo.completedAt')
+				ButtonComplete
 
 			//- number & description
 			.flex.items-center.gap-2
-				.inline-block { todo.order }.
-				.whitespace-nowrap { todo.description }
+
+				//- show number only if not completed
+				+if('!todo.completedAt')
+					.inline-block { todo.order }.
+
+				//- format description
+				+if('!todo.completedAt')
+					.whitespace-nowrap { todo.description }
+					+else
+						.whitespace-nowrap.line-through.opacity-80 { todo.description }
 
 			//- tags
 			TagsBlock(tags!="{ todo.tags.split(',') }")
 
 			//- scheduled to start
-			+if('todo.scheduledToStartAt && !hideScheduledToStartAt')
+			+if('todo.scheduledToStartAt && !hideStartValue')
 				ScheduledStartBlock(start!="{ todo.scheduledToStartAt }")
 
 			//- styled as links
 			.flex.gap-2.items-center.text-13(class="opacity-0 group-hover/form:opacity-100")
 				EditLink(todoId!="{ todo.id }")
-				DeleteButton
+				ButtonDelete
 				+if('!todo.scheduledToStartAt || !isToday(todo.scheduledToStartAt)')
-					MoveToTodayButton
+					ButtonMoveToToday
+				+if('todo.scheduledToStartAt')
+					ButtonMoveToNextDay
+				+if('todo.scheduledToStartAt')
+					ButtonUnschedule
 </template>

@@ -1,13 +1,16 @@
 <!-- Perhaps the load function on this page should only load incomplete todos ??-->
 <script lang="ts">
+
+	// console.log(new Date('5-08-2023'))
 	// components
 	import EditLink from "$atoms/EditLink.svelte";
 	import Header from "$organisms/Header.svelte";
 	import TagsBlock from "$atoms/TagsBlock.svelte";
-	import DeleteButton from "$atoms/DeleteButton.svelte";
-	import CompleteButton from "$atoms/CompleteButton.svelte";
+	import DeleteButton from "$atoms/ButtonDelete.svelte";
+	import CompleteButton from "$atoms/ButtonComplete.svelte";
 	import FieldTodoId from "$atoms/FieldTodoId.svelte";
 	import TodosList from "$molecules/TodosList.svelte";
+	import DayAndDateBlock from "$atoms/DayAndDateBlock.svelte";
 
 	// types
 	import type { PageData } from "./$types";
@@ -15,7 +18,7 @@
 	export let data: PageData;
 
 	// utils
-	import { getTomorrowDate } from "$utils/dateUtils";
+	import { justDate, getTomorrowDate, getDayOfWeek, dayAndDateString, newDayFromToday } from "$utils/dateUtils";
 
 	let todos: Todo[];
 	$: todos = data?.feed?.todos ?? [];
@@ -42,31 +45,31 @@
 	$: name = data.feed?.name ? data.feed.name : "test";
 
 	// functions
-	function displayDate(date: Date) {
-		const dateString = date.toLocaleString(); // e.g. 9/19/2021, 10:00:00 AM
-		const dateOnly = dateString.split(",")[0]; // e.g. 9/19/2021
-		const timeString = dateString.split(",")[1].trim(); // e.g. 10:00:00 AM
-		const timeOnly = timeString.split(" ")[0]; // e.g. 10:00:00
-		const timeNoSeconds = timeString.split(":").slice(0, 2).join(":"); // e.g. 10:00
-		const amPm = timeString.split(" ")[1]; // e.g. AM
+	// function displayDate(date: Date) {
+	// 	const dateString = date.toLocaleString(); // e.g. 9/19/2021, 10:00:00 AM
+	// 	const dateOnly = dateString.split(",")[0]; // e.g. 9/19/2021
+	// 	const timeString = dateString.split(",")[1].trim(); // e.g. 10:00:00 AM
+	// 	const timeOnly = timeString.split(" ")[0]; // e.g. 10:00:00
+	// 	const timeNoSeconds = timeString.split(":").slice(0, 2).join(":"); // e.g. 10:00
+	// 	const amPm = timeString.split(" ")[1]; // e.g. AM
 
-		return [dateOnly, timeNoSeconds, amPm] as string[];
-	}
+	// 	return [dateOnly, timeNoSeconds, amPm] as string[];
+	// }
 
 </script>
 
 <template lang="pug">
 	//- head
 	svelte:head
-		title toods + sqlite
+		title toods
 		meta(
 			content="",
 			name=""
 		)
 
 	//- body
-	Header(name!="{ name }")
-	main.relative.grid.bg-primary.p-4.pb-48.text-white.px-8(
+	Header(message!="It's time to get your shit together.")
+	main.relative.grid.bg-primary.p-4.pb-48.px-8(
 		style="min-height: calc(100vh - 4rem)"
 	)
 		//- body
@@ -74,40 +77,52 @@
 			div
 				//- scheduled for today
 				TodosList(
-					hideScheduledToStartAt!="{ true }",
-					showArchived!="{ false }",
-					showCompleted!="{ false }",
-					showScheduled!="{ true }",
-					showScheduledToStartOn!="{ new Date() }",
+					showDivider!="{ false }",
+					hideStartValue!="{ true }",
+					showOnlyScheduledToStartOn!="{ new Date() }",
 					todos!="{ todos }"
 					)
-					.flex.mb-2 Scheduled for
-						a.inline-block.ml-2.underline.underline-offset-4(href="/today") today
+					svelte:fragment
+						a.inline-block.ml-2.underline.underline-offset-4(
+							href!="/day/{justDate(new Date()).replace(/\\./g,'-')}") Today
+						DayAndDateBlock(date!="{ new Date() }")
+
+				//- completed today
+				TodosList(
+					hideStartValue!="{ true }",
+					showCompleted!="{ true }",
+					showHeader!="{ false }",
+					showDivider!="{ false }",
+					showIncomplete!="{ false }",
+					showOnlyScheduledToStartOn!="{ new Date() }",
+					todos!="{ todos }"
+					)
+					svelte:fragment
+						DayAndDateBlock(date!="{ new Date() }")
 
 				//- scheduled for tomorrow
 				TodosList(
-					hideScheduledToStartAt!="{ true }",
-					showArchived!="{ false }",
-					showCompleted!="{ false }",
-					showScheduled!="{ true }",
-					showScheduledToStartOn!="{ getTomorrowDate() }",
+					hideStartValue!="{ true }",
+					showOnlyScheduledToStartOn!="{ getTomorrowDate() }",
 					todos!="{ todos }"
 					)
-					.flex.mb-2 Scheduled for tomorrow
+					svelte:fragment
+						| Tomorrow
+						DayAndDateBlock(date!="{ getTomorrowDate() }")
 
 				//- scheduled for the future
 				TodosList(
-					showArchived!="{ false }",
-					showCompleted!="{ false }",
-					showScheduledInFuture!="{ true }",
+					showScheduledToStartAfter!="{ getTomorrowDate() }",
 					showScheduledInPast!="{ false }",
 					showScheduledToday!="{ false }",
 					showScheduledTomorrow!="{ false }",
 					showUnscheduled!="{ false }",
 					todos!="{ todos }"
 				)
-					.flex.mb-2 Scheduled for
-						a.inline-block.ml-2.underline.underline-offset-4(href="/") beyond tomorrow
+					svelte:fragment
+						| Scheduled for beyond tomorrow
+						DayAndDateBlock(date!="{ newDayFromToday(2) }")
+						span.opacity-80.leading-none &nbsp;+
 
 			//- column 2
 			div
@@ -122,17 +137,31 @@
 					showUnscheduled!="{ false }",
 					todos!="{ todos }"
 					)
-					.flex.mb-2 Scheduled for
+					svelte:fragment
+						| Scheduled for
 						a.inline-block.ml-2.underline.underline-offset-4(href="/") the past
+				//- templates
+				TodosList(
+					showDivider!="{ false }",
+					showArchived!="{ false }",
+					showCompleted!="{ false }",
+					showScheduled!="{ false }",
+					showTemplates!="{ true }",
+					todos!="{ todos }"
+					)
+					svelte:fragment
+						| Templates
 
 				//- unscheduled
 				TodosList(
+					showTemplates!="{ false }",
 					showArchived!="{ false }",
 					showCompleted!="{ false }",
 					showScheduled!="{ false }",
 					todos!="{ todos }"
 					)
-					.flex.mb-2 Unscheduled
+					svelte:fragment
+						| Unscheduled
 
 
 </template>

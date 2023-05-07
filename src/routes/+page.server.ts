@@ -15,6 +15,9 @@ import { fail, redirect } from "@sveltejs/kit";
 // types
 import type { Actions, PageServerLoad } from "./$types";
 
+// utils
+import { add24Hours } from "$utils/dateUtils";
+
 // user data from store
 import { activeUserId } from "$stores/activeUser";
 const userId = get(activeUserId);
@@ -93,6 +96,61 @@ export const actions = {
 			where: { id: id },
 			data: {
 				scheduledToStartAt: new Date().toISOString(),
+			},
+		});
+
+		throw redirect(303, `/`);
+	},
+	moveToNextDay: async ({ request }) => {
+		console.log('attempting to move to next day')
+		const data = await request.formData();
+
+		const id = data.get("id") ? data.get("id") : null;
+		console.log('id', id)
+		const currentStartDate = data.get("scheduledToStartAt") ? data.get("scheduledToStartAt") : null;
+
+		console.log('st', currentStartDate)
+
+		// make sure required fields are present
+		if (!id || !currentStartDate) {
+			return fail(400, { id, missing: true });
+		}
+
+
+
+		// make sure fields are the right type
+		if (typeof id != "string" || typeof currentStartDate != "string") {
+			return fail(400, { incorrect: true });
+		}
+
+		await prisma.todo.update({
+			where: { id: id },
+			data: {
+				scheduledToStartAt: add24Hours(new Date(currentStartDate)).toISOString(),
+			},
+		});
+
+		throw redirect(303, `/`);
+	},
+	// unschedule
+	unscheduleTodo: async ({ request }) => {
+		const data = await request.formData();
+		const id = data.get("id") ? data.get("id") : null;
+
+		// make sure required fields are present
+		if (!id) {
+			return fail(400, { id, missing: true });
+		}
+
+		// make sure fields are the right type
+		if (typeof id != "string") {
+			return fail(400, { incorrect: true });
+		}
+
+		await prisma.todo.update({
+			where: { id: id },
+			data: {
+				scheduledToStartAt: null,
 			},
 		});
 

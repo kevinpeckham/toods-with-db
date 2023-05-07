@@ -4,8 +4,6 @@ export const config = {
 	runtime: "nodejs18.x",
 };
 
-// src/routes/create/+page.server.ts
-
 // import prisma
 import prisma from "$lib/prisma";
 
@@ -17,7 +15,7 @@ import { fail, redirect } from "@sveltejs/kit";
 
 // types
 import type { Actions, PageServerLoad } from "./$types";
-import type { PageParentData } from "./$types";
+
 
 // store functions
 import { writable, get } from "svelte/store";

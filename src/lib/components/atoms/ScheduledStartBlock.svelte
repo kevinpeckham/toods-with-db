@@ -4,6 +4,8 @@ Here's some documentation for this component.
 -->
 
 <script lang="ts">
+import DayAndDateBlock from "$atoms/DayAndDateBlock.svelte";
+
 	// props
 	export let start: Date | null = null;
 
@@ -22,5 +24,6 @@ Here's some documentation for this component.
 					.opacity-80.italic(class="text-[0.8em]") yesterday
 
 				+else
-					.opacity-80(class="text-[0.8em]") {getDayOfWeek(start)}, { start ? justDate(start, true) : "" }
+					//.opacity-80(class="text-[0.8em]") {getDayOfWeek(start)}, { start ? justDate(start, true) : "" }
+					DayAndDateBlock(date!="{ start }")
 </template>
