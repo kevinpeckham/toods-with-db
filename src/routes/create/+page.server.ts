@@ -140,7 +140,6 @@ export const actions = {
 			user: { connect: { id: userId } },
 		};
 
-		console.log(datum);
 
 		await prisma.todo.create({
 			data: datum,

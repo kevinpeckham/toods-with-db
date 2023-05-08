@@ -11,12 +11,12 @@ Here's some documentation for this component.
 </script>
 
 <template lang="pug">
-	.relative.flex.justify-between.items-center.px-8.pt-6.pb-2.border-b.mb-8(class="border-b-neutral-100/40")
+	.relative.flex.justify-between.items-center.px-8.pt-6.pb-2.border-b.mb-8(class="border-b-neutral-100/20")
 			//- message
 			.flex.items-center
-				.mr-2: a.tracking-widest.leading-none.underline-offset-4(
+				.mr-2: a.tracking-widest.leading-none.underline-offset-4.text-accent(
 					href="/"
-					class="pointer:cursor hover:underline hover:text-accent"
+					class="pointer:cursor"
 					) TOODS
 				//.mr-3.leading-none |
 				//.italic.font-light.font-serif.leading-none.opacity-80 { message }

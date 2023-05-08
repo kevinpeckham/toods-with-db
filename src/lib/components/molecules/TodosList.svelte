@@ -18,6 +18,7 @@ Here's some documentation for this component.
 
 	//-- hide certain todo values
 	export let hideStartValue = false;
+	export let hideOrderValue = true;
 
 	//-- show / hide all todos that fit certain criteria
 	export let showArchived = false;
@@ -34,6 +35,7 @@ Here's some documentation for this component.
 	//-- show only those todos that fit certain criteria
 	export let showOnlyScheduledToStartOn: Date | null = null;
 	export let notScheduledToStartOn: Date | null = null;
+	export let showOnlyTemplates: boolean = false;
 
 	//-- show / hide the header
 	export let showHeader = true;
@@ -43,6 +45,10 @@ Here's some documentation for this component.
 	const today = new Date();
 	const startOfDayToday = startOfDay(today);
 	const endOfDayToday = endOfDay(today);
+
+	// set context
+	setContext("hideStartValue", hideStartValue);
+	setContext("hideOrderValue", hideOrderValue);
 
 	// utils
 	import { justDate, endOfDay, startOfDay } from "$utils/dateUtils";
@@ -80,29 +86,29 @@ Here's some documentation for this component.
 		if (showArchived === false && todo.archived === true) { return false; }
 
 		// do not render if showCompleted	== false and todo has been completed
-		else if (showCompleted == false && todo.completedAt != null) { return false; }
+		if (showCompleted == false && todo.completedAt != null) { return false; }
 
 		// do not render if showIncomplete == false and todo has not been completed
-		else if (showIncomplete == false && todo.completedAt == null) { return false; }
+		if (showIncomplete == false && todo.completedAt == null) { return false; }
 
 		// do not render if showTemplates == false and todo is a template
-		else if (showTemplates == false && todo.template == true) { return false; }
+		if (showTemplates == false && todo.template == true) { return false; }
 
 		// do not render if showScheduled == false and todo is scheduled
-		else if (showScheduled == false && todo.scheduledToStartAt != null) { return false; }
+		if (showScheduled == false && todo.scheduledToStartAt instanceof Date) { return false; }
 
 		// do not render showUnscheduled == false and todo is not scheduled
-		else if (showUnscheduled == false && todo.scheduledToStartAt == null) { return false; }
+		if (showUnscheduled == false && todo.scheduledToStartAt == null) { return false; }
 
 		//do not render if showScheduledInPast == false and todo is scheduled for past start date
-		else if (
+		if (
 			showScheduledInPast == false &&
 			todo.scheduledToStartAt != null &&
 			todo.scheduledToStartAt < startOfDay(new Date())
 		) { return false; }
 
 		// do not render if showScheduledToday == false and todo is scheduled for today
-		else if (
+		if (
 			showScheduledToday == false &&
 			todo.scheduledToStartAt != null &&
 			new Date(todo.scheduledToStartAt).toLocaleString().split(",")[0] ==
@@ -110,7 +116,7 @@ Here's some documentation for this component.
 		) { return false; }
 
 		// do not render if showScheduledTomorrow == false and todo is scheduled for tomorrow
-		else if (
+		if (
 			showScheduledTomorrow == false &&
 			todo.scheduledToStartAt != null &&
 			new Date(todo.scheduledToStartAt).toLocaleString().split(",")[0] ==
@@ -120,28 +126,31 @@ Here's some documentation for this component.
 		)	{ return false; }
 
 		// do not render if showScheduledInFuture == false and todo is scheduled for future start date (after today)
-		else if (
+		if (
 			showScheduledInFuture == false &&
 			todo.scheduledToStartAt != null &&
 			todo.scheduledToStartAt > endOfDay(new Date())
 		)
 		{ return false; }
 
-		// is scheduled to start on specific day
-		else if (
+		// show only todos that are scheduled to start on a specific day
+		if (
 			showOnlyScheduledToStartOn &&
 			!isScheduledToStart(todo, showOnlyScheduledToStartOn)
 		)
 		{ return false; }
 
-			// is scheduled to start on any day except specific day
-		else if (
+		// hide todos scheduled to start on a specific day
+		if (
 			notScheduledToStartOn &&
 			isScheduledToStart(todo, notScheduledToStartOn)
-		)
+		) { return false; }
+
+		// show only templates
+		if (showOnlyTemplates && !isTemplate(todo))
 		{ return false; }
 
-		else { return true; };
+		return true;
 
 	}
 
@@ -149,8 +158,8 @@ Here's some documentation for this component.
 	let filtered_todos: Todo[];
 	$:filtered_todos = todos.filter((todo) => showTodo(todo));
 
-	// set context
-	setContext("hideStartValue", hideStartValue);
+
+
 </script>
 
 <template lang="pug">
@@ -164,6 +173,6 @@ Here's some documentation for this component.
 					.flex.mb-2
 						slot
 				+each('filtered_todos as todo, index (todo.id)')
-					div
+					div.py-2.overflow-hidden.rounded.px-2(class!="hover:bg-white/10 {todo.completedAt ? 'opacity-80 text-[.75em]' : ''}")
 						TodoListItem(todo!="{ todo }")
 	</template>

@@ -54,22 +54,14 @@ export function add24Hours(date:Date) {
 export function getDayOfWeek(date: Date) {
 	const day = date.getDay();
 	const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-	// 	case 0:
-	// 		return "Sunday";
-	// 	case 1:
-	// 		return "Monday";
-	// 	case 2:
-	// 		return "Tuesday";
-	// 	case 3:
-	// 		return "Wednesday";
-	// 	case 4:
-	// 		return "Thursday";
-	// 	case 5:
-	// 		return "Friday";
-	// 	case 6:
-	// 		return "Saturday";
-	// }
 	return days[day];
+}
+
+export function daysFromToday(date: Date) {
+	const today = new Date();
+	const diffTime = date.getTime() - today.getTime();
+	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+	return diffDays;
 }
 
 export function dayAndDateString(date: Date){
@@ -81,4 +73,9 @@ export function dayAndDateString(date: Date){
 export function newDayFromToday(days: number) {
 	const today = new Date();
 	return new Date(today.getTime() + 86400000 * days);
+}
+
+export function getDateXDaysFromDate(date: Date, days: number) {
+	const startOfGivenDay = startOfDay(date);
+	return new Date(startOfGivenDay.getTime() + 86400000 * days);
 }

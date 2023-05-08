@@ -17,9 +17,10 @@ Here's some documentation for this component.
 	import TagsBlock from "$atoms/TagsBlock.svelte";
 	import EditLink from "$atoms/EditLink.svelte";
 
-	// Hidden Field Components
+	// Field Components
 	import FieldTodoId from "$atoms/FieldTodoId.svelte";
 	import FieldScheduledToStartAt from "$atoms/FieldScheduledToStart.svelte";
+	import FieldDescription from "$atoms/FieldDescription.svelte";
 
 	import ScheduledStartBlock from "$atoms/ScheduledStartBlock.svelte";
 
@@ -32,14 +33,15 @@ Here's some documentation for this component.
 
 	// variables
 	$: hideStartValue = getContext("hideStartValue") as boolean;
+	$: hideOrderValue = getContext("hideOrderValue") as boolean;
 
 	// utils
 	import { isToday } from "$utils/dateUtils";
 </script>
 
 <template lang="pug">
-	form.py-2.overflow-hidden.rounded.px-2(
-		class="hover:bg-white/10 group/form actions",
+	form(
+		class=" group/form actions",
 		method="post"
 	)
 		FieldTodoId(
@@ -51,21 +53,24 @@ Here's some documentation for this component.
 			value!="{ todo.scheduledToStartAt }"
 		)
 		.flex.items-center.gap-4
-			+if('!todo.completedAt')
+			+if('!todo.completedAt && !todo.template')
 				ButtonComplete
 
 			//- number & description
 			.flex.items-center.gap-2
 
 				//- show number only if not completed
-				+if('!todo.completedAt')
+				+if('!todo.completedAt && !hideOrderValue')
 					.inline-block { todo.order }.
 
 				//- format description
 				+if('!todo.completedAt')
-					.whitespace-nowrap { todo.description }
+					FieldDescription(
+						value!="{ todo.description }"
+					)
+					//input.whitespace-nowrap.bg-primary(readonly value!="{ todo.description }")
 					+else
-						.whitespace-nowrap.line-through.opacity-80 { todo.description }
+						.whitespace-nowrap.line-through { todo.description }
 
 			//- tags
 			TagsBlock(tags!="{ todo.tags.split(',') }")
@@ -76,11 +81,13 @@ Here's some documentation for this component.
 
 			//- styled as links
 			.flex.gap-2.items-center.text-13(class="opacity-0 group-hover/form:opacity-100")
-				EditLink(todoId!="{ todo.id }")
-				ButtonDelete
-				+if('!todo.scheduledToStartAt || !isToday(todo.scheduledToStartAt)')
+				+if('!todo.template')
+					EditLink(todoId!="{ todo.id }")
+				+if('!todo.template')
+					ButtonDelete
+				+if('(!todo.scheduledToStartAt || !isToday(todo.scheduledToStartAt)) && !todo.template')
 					ButtonMoveToToday
-				+if('todo.scheduledToStartAt')
+				+if('todo.scheduledToStartAt && !todo.template')
 					ButtonMoveToNextDay
 				+if('todo.scheduledToStartAt')
 					ButtonUnschedule

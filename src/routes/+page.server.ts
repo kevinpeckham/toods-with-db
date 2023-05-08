@@ -6,6 +6,9 @@ export const config = {
 // import prisma
 import prisma from "$lib/prisma";
 
+// import nanoid for generating unique ids
+import { nanoid } from "nanoid";
+
 // store functions
 import { get } from "svelte/store";
 
@@ -132,7 +135,6 @@ export const actions = {
 
 		throw redirect(303, `/`);
 	},
-	// unschedule
 	unscheduleTodo: async ({ request }) => {
 		const data = await request.formData();
 		const id = data.get("id") ? data.get("id") : null;
@@ -156,4 +158,31 @@ export const actions = {
 
 		throw redirect(303, `/`);
 	},
+	makeTodoFromTemplate: async ({ request }) => {
+		const data = await request.formData();
+		const description = data.get("description") ? data.get("description") : '';
+		const id = nanoid();
+
+		// make sure required fields are present
+		if (!id) {
+			return fail(400, { id, missing: true });
+		}
+
+		// make sure fields are the right type
+		if (typeof id != "string" || typeof userId != "string" || typeof description != "string") {
+			return fail(400, { incorrect: true });
+		}
+
+		const newTodo = await prisma.todo.create({
+			data: {
+				id: id,
+				description: description,
+				userId: userId,
+				next: false,
+				order: 0,
+				scheduledToStartAt: new Date().toISOString(),
+			},
+		});
+	}
+
 } satisfies Actions;

@@ -1,7 +1,14 @@
 <!-- Perhaps the load function on this page should only load incomplete todos ??-->
 <script lang="ts">
+	// import nanoid for generating unique ids
+	//import { nanoid } from "nanoid";
 
-	// console.log(new Date('5-08-2023'))
+
+	// broswer (for local storaget)
+	import { browser } from "$app/environment";
+
+
+
 	// components
 	import EditLink from "$atoms/EditLink.svelte";
 	import Header from "$organisms/Header.svelte";
@@ -18,12 +25,19 @@
 	export let data: PageData;
 
 	// utils
-	import { justDate, getTomorrowDate, getDayOfWeek, dayAndDateString, newDayFromToday } from "$utils/dateUtils";
+	import { justDate, getTomorrowDate, getDayOfWeek, dayAndDateString, newDayFromToday, isToday } from "$utils/dateUtils";
 
 	let todos: Todo[];
 	$: todos = data?.feed?.todos ?? [];
 	$: incomplete = todos.filter((todo) => todo.completedAt == null);
 	$: completed = todos.filter((todo) => todo.completedAt != null);
+
+	// backup todos to local storage
+	if (browser) {
+		localStorage.setItem("todos", JSON.stringify(todos));
+	}
+
+	const today = new Date();
 
 	//- sort by order
 	// $: todos.sort((a, b) => {
@@ -107,7 +121,8 @@
 					todos!="{ todos }"
 					)
 					svelte:fragment
-						| Tomorrow
+						a.inline-block.ml-2.underline.underline-offset-4(
+							href!="/day/{today.getMonth()+1}-{today.getDate()+1}-{today.getFullYear()}") Tomorrow
 						DayAndDateBlock(date!="{ getTomorrowDate() }")
 
 				//- scheduled for the future
@@ -130,6 +145,7 @@
 				TodosList(
 					showArchived!="{ false }",
 					showCompleted!="{ false }",
+					showDivider!="{ false }",
 					showScheduled!="{ true }",
 					showScheduledInFuture!="{ false }",
 					showScheduledInPast!="{ true }",
@@ -144,9 +160,8 @@
 				TodosList(
 					showDivider!="{ false }",
 					showArchived!="{ false }",
-					showCompleted!="{ false }",
-					showScheduled!="{ false }",
 					showTemplates!="{ true }",
+					showOnlyTemplates!="{ true }",
 					todos!="{ todos }"
 					)
 					svelte:fragment
@@ -155,9 +170,10 @@
 				//- unscheduled
 				TodosList(
 					showTemplates!="{ false }",
-					showArchived!="{ false }",
+					showArchived!="{ false}",
 					showCompleted!="{ false }",
 					showScheduled!="{ false }",
+					showUnscheduled!="{ true }",
 					todos!="{ todos }"
 					)
 					svelte:fragment

@@ -11,7 +11,8 @@
 	import type { Todo } from "@prisma/client";
 
 	// utils
-	import { justDate, isToday } from "$utils/dateUtils";
+	import { justDate, isToday, isTomorrow, daysFromToday, getDateXDaysFromDate } from "$utils/dateUtils";
+
 
 	// props
 	export let data: PageData;
@@ -19,7 +20,8 @@
 	// variable declarations
 	let todos: Todo[] = [];
 	let date: string = ''; // e.g. "2021-01-01"
-	let dateDisplay: string = '';
+	let dateDisplay: string[] = [];
+	let dateObj: Date;
 
 	// reactive variables
 	$: todos = data.feed ? data.feed : [];
@@ -28,9 +30,32 @@
 	// date display
 	$: {
 		if (date) {
-			const dateObj = new Date(date);
-			dateDisplay = isToday(dateObj) ? "Today" : date;
+			dateObj = new Date(date);
+			dateDisplay = dayLabel(dateObj);
 		}
+	}
+
+	$:nextLink = dateObj ? linkToXDaysFromDate(1) : '';
+	$:prevLink = dateObj ? linkToXDaysFromDate(-1) : '';
+
+	function dayLabel(date: Date) {
+		const days = daysFromToday(date);
+		const formattedDate = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+		if (isToday(date)) return ["Today", formattedDate];
+		else if (isTomorrow(date)) return ["Tomorrow", formattedDate];
+		else {
+			const symbol = days > 0 ? '+' : '';
+			return [symbol +  days + ' Days', formattedDate]
+		};
+	}
+
+	function linkToXDaysFromDate(days: number) {
+		const nextDate = getDateXDaysFromDate(dateObj, days)
+		const year = nextDate.getFullYear();
+		const month = nextDate.getMonth() + 1;
+		const day = nextDate.getDate();
+		const dateString = `${month}-${day}-${year}`;
+		return `/day/${dateString}`;
 	}
 
 </script>
@@ -39,21 +64,31 @@
 	Header(
 		showDate!="{false}"
 		message!="Welcome, Stranger!")
-	main.relative.grid.bg-primary.p-4.pb-48.px-8(
+	main.relative.bg-primary.p-4.pb-48.px-8(
 		style="min-height: calc(100vh - 4rem)"
 		)
-		div Day View: {dateDisplay}
+		.mb-2.text-14 /day
+		.flex.justify-between.items-center.mb-6
+			//- Date
+			.flex.items-end
+				.text-24.leading-none {dateDisplay[0] ? dateDisplay[0] : '+/- x days'}
+				.text-14.ml-4.leading-none.opacity-80 {dateDisplay[1]}
+			//- Links to Adjacent Days
+			.flex.gap-4
+				a.block.opacity-80(class="text-[.85em] hover:underline hover:accent underline-offset-4" href!="{prevLink}") ← Prev
+				a.block.opacity-80(class="text-[.85em] hover:underline hover:accent underline-offset-4" href!="{nextLink}") Next →
 		.grid.grid-cols-2.w-full.gap-8
 			div
 				//- scheduled for today
 				TodosList(
+					showHeader!="{ false }",
 					hideStartValue!="{ true }",
-					showOnlyScheduledToStartOn!="{ new Date() }",
+					showOnlyScheduledToStartOn!="{ new Date(date) }",
 					todos!="{ todos }"
 					)
-					svelte:fragment
-						a.inline-block.ml-2.underline.underline-offset-4(href="/today") Today
-						DayAndDateBlock(date!="{ new Date() }")
+					//-svelte:fragment
+						a.inline-block.ml-2.underline-offset-4(class="hover:underline" href="/today") Today
+						DayAndDateBlock(date!="{ new Date(date) }")
 
 				//- completed today
 				TodosList(
@@ -62,11 +97,11 @@
 					showHeader!="{ false }",
 					showDivider!="{ false }",
 					showIncomplete!="{ false }",
-					showOnlyScheduledToStartOn!="{ new Date() }",
+					showOnlyScheduledToStartOn!="{ new Date(date) }",
 					todos!="{ todos }"
 					)
-					svelte:fragment
-						DayAndDateBlock(date!="{ new Date() }")
+					//-svelte:fragment
+						DayAndDateBlock(date!="{ new Date(date) }")
 
 	//-main.relative.grid.min-h-screen.bg-primary.p-4.pb-48.text-white.px-8.py-8
 		div(class="sm:max-w-lg lg:max-w-xl xl:max-w-2xl")
