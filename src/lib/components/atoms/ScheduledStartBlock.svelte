@@ -4,13 +4,19 @@ Here's some documentation for this component.
 -->
 
 <script lang="ts">
-import DayAndDateBlock from "$atoms/DayAndDateBlock.svelte";
+	import DayAndDateBlock from "$atoms/DayAndDateBlock.svelte";
 
 	// props
 	export let start: Date | null = null;
 
 	// utils
-	import { justDate, isToday, isTomorrow, isYesterday, getDayOfWeek } from "$utils/dateUtils";
+	import {
+		justDate,
+		isToday,
+		isTomorrow,
+		isYesterday,
+		getDayOfWeek,
+	} from "$utils/dateUtils";
 </script>
 
 <template lang="pug">

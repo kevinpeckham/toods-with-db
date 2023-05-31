@@ -103,8 +103,12 @@ export const actions = {
 		const tags = data.get("tags") ? data.get("tags") : "";
 		const completedAt = completedAtFieldValue(data);
 		const dueAt = dueAtFieldValue(data);
-		const scheduledToStartAt = scheduledToStartAtFieldValue(data);
+		const scheduledToStartAt = data.get("scheduledToStartAt")
+			? data.get("scheduledToStartAt")
+			: null;
 		const scheduledToEndAt = scheduledToEndAtFieldValue(data);
+
+		console.log("stsa", scheduledToStartAt);
 
 		// 2.
 		if (!description || !userId) {
@@ -113,6 +117,7 @@ export const actions = {
 
 		// 3.
 		if (
+			// typeof scheduledToStartAt != "string" ||
 			typeof order != "number" ||
 			typeof description != "string" ||
 			description.length > 300 ||
@@ -139,7 +144,6 @@ export const actions = {
 			tags: tags,
 			user: { connect: { id: userId } },
 		};
-
 
 		await prisma.todo.create({
 			data: datum,

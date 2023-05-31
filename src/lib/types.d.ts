@@ -1,7 +1,7 @@
 export interface User {
-  username: string;
+	username: string;
 }
 
 export interface AuthUser extends User {
-  password: string;
+	password: string;
 }

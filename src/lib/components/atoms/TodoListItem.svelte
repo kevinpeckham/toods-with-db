@@ -24,7 +24,6 @@ Here's some documentation for this component.
 
 	import ScheduledStartBlock from "$atoms/ScheduledStartBlock.svelte";
 
-
 	// types from the Prisma schema
 	import type { Todo } from "@prisma/client";
 
@@ -40,10 +39,7 @@ Here's some documentation for this component.
 </script>
 
 <template lang="pug">
-	form(
-		class=" group/form actions",
-		method="post"
-	)
+	form(class=" group/form actions", method="post")
 		FieldTodoId(
 			hidden!="{ true }",
 			value!="{ todo.id }"
@@ -58,19 +54,20 @@ Here's some documentation for this component.
 
 			//- number & description
 			.flex.items-center.gap-2
-
 				//- show number only if not completed
 				+if('!todo.completedAt && !hideOrderValue')
 					.inline-block { todo.order }.
 
 				//- format description
-				+if('!todo.completedAt')
-					FieldDescription(
-						value!="{ todo.description }"
-					)
-					//input.whitespace-nowrap.bg-primary(readonly value!="{ todo.description }")
-					+else
-						.whitespace-nowrap.line-through { todo.description }
+				div(class="")
+					+if('!todo.completedAt')
+						FieldDescription(
+							classes!="bg-transparent inline-block min-w-[380px]",
+							value!="{ todo.description }"
+						)
+						//input.whitespace-nowrap.bg-primary(readonly value!="{ todo.description }")
+						+else
+							.whitespace-nowrap.line-through { todo.description }
 
 			//- tags
 			TagsBlock(tags!="{ todo.tags.split(',') }")

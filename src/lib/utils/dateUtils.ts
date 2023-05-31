@@ -7,7 +7,7 @@ export function justDate(date: Date, twoDigitYear?: boolean) {
 	else return month + "." + day + "." + fullYear;
 }
 
-export function getTomorrowDate()	{
+export function getTomorrowDate() {
 	const tomorrow = new Date(Date.now() + 86400000);
 	return tomorrow;
 }
@@ -33,8 +33,6 @@ export function startOfDay(date: Date) {
 	return new Date(`${justDate(date)} 00:00:00`);
 }
 
-
-
 export function isTomorrow(date: Date) {
 	const tomorrow = justDate(new Date(Date.now() + 86400000));
 	const formattedDate = justDate(date);
@@ -47,7 +45,7 @@ export function isYesterday(date: Date) {
 	return yesterday == formattedDate;
 }
 
-export function add24Hours(date:Date) {
+export function add24Hours(date: Date) {
 	return new Date(date.getTime() + 86400000);
 }
 
@@ -64,9 +62,9 @@ export function daysFromToday(date: Date) {
 	return diffDays;
 }
 
-export function dayAndDateString(date: Date){
+export function dayAndDateString(date: Date) {
 	const dayOfWeek = getDayOfWeek(date);
-	const formattedDate =  date.toLocaleDateString().replace(/\//g, '.');
+	const formattedDate = date.toLocaleDateString().replace(/\//g, ".");
 	return `${dayOfWeek}, ${formattedDate}`;
 }
 

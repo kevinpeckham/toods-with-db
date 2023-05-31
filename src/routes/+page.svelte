@@ -3,11 +3,8 @@
 	// import nanoid for generating unique ids
 	//import { nanoid } from "nanoid";
 
-
 	// broswer (for local storaget)
 	import { browser } from "$app/environment";
-
-
 
 	// components
 	import EditLink from "$atoms/EditLink.svelte";
@@ -18,6 +15,7 @@
 	import FieldTodoId from "$atoms/FieldTodoId.svelte";
 	import TodosList from "$molecules/TodosList.svelte";
 	import DayAndDateBlock from "$atoms/DayAndDateBlock.svelte";
+	import CreateNewTodo from "$atoms/ButtonCreateNewTodo.svelte";
 
 	// types
 	import type { PageData } from "./$types";
@@ -25,9 +23,19 @@
 	export let data: PageData;
 
 	// utils
-	import { justDate, getTomorrowDate, getDayOfWeek, dayAndDateString, newDayFromToday, isToday } from "$utils/dateUtils";
+	import {
+		justDate,
+		getTomorrowDate,
+		getDayOfWeek,
+		dayAndDateString,
+		newDayFromToday,
+		isToday,
+	} from "$utils/dateUtils";
 
+	// variables
 	let todos: Todo[];
+
+	// reactive
 	$: todos = data?.feed?.todos ?? [];
 	$: incomplete = todos.filter((todo) => todo.completedAt == null);
 	$: completed = todos.filter((todo) => todo.completedAt != null);
@@ -45,7 +53,6 @@
 	// 	if (a.order < b.order) return -1;
 	// 	return 0;
 	// });
-
 
 	let todo: Todo;
 
@@ -69,7 +76,6 @@
 
 	// 	return [dateOnly, timeNoSeconds, amPm] as string[];
 	// }
-
 </script>
 
 <template lang="pug">
@@ -88,47 +94,55 @@
 	)
 		//- body
 		.grid.grid-cols-2.w-full.gap-8
+			//- column 1
 			div
 				//- scheduled for today
-				TodosList(
-					showDivider!="{ false }",
-					hideStartValue!="{ true }",
-					showOnlyScheduledToStartOn!="{ new Date() }",
-					todos!="{ todos }"
+				.mb-8
+					TodosList(
+						hideStartValue!="{ true }",
+						showDivider!="{ false }",
+						showOnlyScheduledToStartOn!="{ today }",
+						todos!="{ todos }"
 					)
-					svelte:fragment
-						a.inline-block.ml-2.underline.underline-offset-4(
-							href!="/day/{justDate(new Date()).replace(/\\./g,'-')}") Today
-						DayAndDateBlock(date!="{ new Date() }")
+						svelte:fragment
+							a.inline-block.ml-2.underline.underline-offset-4(
+								href!="/day/{justDate(today).replace(/\\./g,'-')}"
+							) Today
+							DayAndDateBlock(date!="{ today }")
+					div
+						CreateNewTodo
 
 				//- completed today
-				TodosList(
-					hideStartValue!="{ true }",
-					showCompleted!="{ true }",
-					showHeader!="{ false }",
-					showDivider!="{ false }",
-					showIncomplete!="{ false }",
-					showOnlyScheduledToStartOn!="{ new Date() }",
-					todos!="{ todos }"
+				.mb-8
+					TodosList(
+						hideStartValue!="{ true }",
+						showCompleted!="{ true }",
+						showDivider!="{ false }",
+						showHeader!="{ false }",
+						showIncomplete!="{ false }",
+						showOnlyScheduledToStartOn!="{ today }",
+						todos!="{ todos }"
 					)
-					svelte:fragment
-						DayAndDateBlock(date!="{ new Date() }")
+						svelte:fragment
+							DayAndDateBlock(date!="{ today }")
 
 				//- scheduled for tomorrow
-				TodosList(
-					hideStartValue!="{ true }",
-					showOnlyScheduledToStartOn!="{ getTomorrowDate() }",
-					todos!="{ todos }"
+				.mb-8
+					TodosList(
+						hideStartValue!="{ true }",
+						showOnlyScheduledToStartOn!="{ getTomorrowDate() }",
+						todos!="{ todos }"
 					)
-					svelte:fragment
-						a.inline-block.ml-2.underline.underline-offset-4(
-							href!="/day/{today.getMonth()+1}-{today.getDate()+1}-{today.getFullYear()}") Tomorrow
-						DayAndDateBlock(date!="{ getTomorrowDate() }")
+						svelte:fragment
+							a.inline-block.ml-2.underline.underline-offset-4(
+								href!="/day/{today.getMonth()+1}-{today.getDate()+1}-{today.getFullYear()}"
+							) Tomorrow
+							DayAndDateBlock(date!="{ getTomorrowDate() }")
 
 				//- scheduled for the future
 				TodosList(
-					showScheduledToStartAfter!="{ getTomorrowDate() }",
 					showScheduledInPast!="{ false }",
+					showScheduledToStartAfter!="{ getTomorrowDate() }",
 					showScheduledToday!="{ false }",
 					showScheduledTomorrow!="{ false }",
 					showUnscheduled!="{ false }",
@@ -152,32 +166,30 @@
 					showScheduledToday!="{ false }",
 					showUnscheduled!="{ false }",
 					todos!="{ todos }"
-					)
+				)
 					svelte:fragment
 						| Scheduled for
 						a.inline-block.ml-2.underline.underline-offset-4(href="/") the past
 				//- templates
 				TodosList(
-					showDivider!="{ false }",
 					showArchived!="{ false }",
-					showTemplates!="{ true }",
+					showDivider!="{ false }",
 					showOnlyTemplates!="{ true }",
+					showTemplates!="{ true }",
 					todos!="{ todos }"
-					)
+				)
 					svelte:fragment
 						| Templates
 
 				//- unscheduled
 				TodosList(
-					showTemplates!="{ false }",
-					showArchived!="{ false}",
+					showArchived!="{ false }",
 					showCompleted!="{ false }",
 					showScheduled!="{ false }",
+					showTemplates!="{ false }",
 					showUnscheduled!="{ true }",
 					todos!="{ todos }"
-					)
+				)
 					svelte:fragment
 						| Unscheduled
-
-
 </template>

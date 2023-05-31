@@ -16,7 +16,6 @@ import { fail, redirect } from "@sveltejs/kit";
 // types
 import type { Actions, PageServerLoad } from "./$types";
 
-
 // store functions
 import { writable, get } from "svelte/store";
 

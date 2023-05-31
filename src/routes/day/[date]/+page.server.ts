@@ -20,8 +20,6 @@ const userId = get(activeUserId);
 // utils
 import { startOfDay, endOfDay } from "$utils/dateUtils";
 
-
-
 let date: string;
 
 //- load todos for a specific day
@@ -31,10 +29,10 @@ export const load = async ({ params: { date } }) => {
 		where: {
 			userId: userId,
 			scheduledToStartAt: {
-				gte: startOfDay( new Date(date)).toISOString(),
-				lte: endOfDay( new Date(date)).toISOString(),
-			}
-		 },
+				gte: startOfDay(new Date(date)).toISOString(),
+				lte: endOfDay(new Date(date)).toISOString(),
+			},
+		},
 	});
 	return { feed: response, date: date };
 };
