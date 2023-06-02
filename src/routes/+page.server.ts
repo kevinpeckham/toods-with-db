@@ -103,7 +103,7 @@ export const actions = {
 			where: { id: id },
 			data: {
 				next: !next,
-				order: 0,
+				order: next ? -1 : 1,
 			},
 		});
 

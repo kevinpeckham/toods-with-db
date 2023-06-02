@@ -101,6 +101,6 @@ Here's some documentation for this component.
 					ButtonMoveToNextDay
 				+if('todo.scheduledToStartAt')
 					ButtonUnschedule
-				+if('todo.next != null')
+				+if('!todo.completed')
 					ButtonNext(next!="{ next }")
 </template>

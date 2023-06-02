@@ -4,15 +4,34 @@ Here's some documentation for this component.
 -->
 
 <script lang="ts">
-	export let next = false;
+	// context api
+	import { getContext } from "svelte";
+
+	// variables
+	$: next = getContext("next") as boolean;
+	$: dynamicClasses = next ? "" : "hover:text-accent";
+
+	// constants
+	const defaultClasses = `
+	inline-block
+	back
+	underline
+	underline-offset-4
+	leading-none
+	flex
+	items-center
+	group
+	opacity-80
+	hover:opacity-100`;
 </script>
 
 <template lang="pug">
-	button.inline-block.back.underline.underline-offset-4.leading-none.flex.items-center.group(
-		class="hover:text-accent opacity-80 hover:opacity-100",
+	button(
+		class!="{defaultClasses} {dynamicClasses}",
 		aria-label="toggle next",
 		formaction="?/toggleNext",
 		title="toggle next",
 		type="submit"
-	) Next
+	)
+		span.inline-block &nbsp;!&nbsp;
 </template>

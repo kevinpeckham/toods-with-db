@@ -179,6 +179,12 @@ Here's some documentation for this component.
 	// filter todos with showTodo function
 	let filtered_todos: Todo[];
 	$: filtered_todos = todos.filter((todo) => showTodo(todo));
+	$: sorted_todos = filtered_todos.sort((a, b) => {
+		if (a.order ==  -1 && b.order == -1) return 1;
+		if (a.order > b.order) return -1;
+		if (a.order < b.order) return 1;
+		return 1;
+	});
 </script>
 
 <template lang="pug">
@@ -191,7 +197,7 @@ Here's some documentation for this component.
 				+if('showHeader')
 					.flex.mb-2
 						slot
-				+each('filtered_todos as todo, index (todo.id)')
+				+each('sorted_todos as todo, index (todo.id)')
 					.overflow-hidden.rounded(
 						class!="hover:bg-white/10 {todo.completedAt ? 'opacity-80 text-[.75em]' : ''}"
 					)
