@@ -4,6 +4,14 @@ Display tags in a row.
 -->
 
 <script lang="ts">
+	// context api
+	import { getContext } from "svelte";
+
+	// variables
+	$: next = getContext("next") as boolean;
+	$: nextStyle = next ? "border-primary" : "border-neutral-200";
+
+	// props
 	export let tags: string[] = [];
 </script>
 
@@ -11,7 +19,7 @@ Display tags in a row.
 	+if('tags.length > 0 && tags[0] != ""')
 		.flex.items-center.gap-2
 			+each('tags as tag')
-				span.inline-block.py-1.px-2.rounded.border-white.border.leading-none(
-					class="border-[1px] text-[.75em]"
+				span.inline-block.py-1.px-2.rounded.border.leading-none(
+					class!="{nextStyle} border-[1px] text-[.75em]"
 				) { tag }
 </template>

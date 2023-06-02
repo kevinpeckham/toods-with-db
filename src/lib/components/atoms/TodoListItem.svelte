@@ -4,25 +4,28 @@ Here's some documentation for this component.
 -->
 
 <script lang="ts">
-	import { getContext } from "svelte";
+	// context api
+	import { getContext, setContext } from "svelte";
 
 	// components
-
 	import ButtonComplete from "$atoms/ButtonComplete.svelte";
 	import ButtonDelete from "$atoms/ButtonDelete.svelte";
 	import ButtonMoveToNextDay from "./ButtonMoveToNextDay.svelte";
 	import ButtonMoveToToday from "./ButtonMoveToToday.svelte";
+	import ButtonNext from "$atoms/ButtonNext.svelte";
 	import ButtonUnschedule from "./ButtonUnschedule.svelte";
-
 	import TagsBlock from "$atoms/TagsBlock.svelte";
 	import EditLink from "$atoms/EditLink.svelte";
 
 	// Field Components
+	import FieldNext from "$atoms/FieldNext.svelte";
 	import FieldTodoId from "$atoms/FieldTodoId.svelte";
 	import FieldScheduledToStartAt from "$atoms/FieldScheduledToStart.svelte";
 	import FieldDescription from "$atoms/FieldDescription.svelte";
-
 	import ScheduledStartBlock from "$atoms/ScheduledStartBlock.svelte";
+
+	// utils
+	import { isToday } from "$utils/dateUtils";
 
 	// types from the Prisma schema
 	import type { Todo } from "@prisma/client";
@@ -33,16 +36,26 @@ Here's some documentation for this component.
 	// variables
 	$: hideStartValue = getContext("hideStartValue") as boolean;
 	$: hideOrderValue = getContext("hideOrderValue") as boolean;
+	$: next = todo.next as boolean;
 
-	// utils
-	import { isToday } from "$utils/dateUtils";
+	// context
+	$: setContext("next", next);
+
+	// constants
+	const nextStyle = "bg-accent text-primary";
 </script>
 
 <template lang="pug">
-	form(class=" group/form actions", method="post")
+	form.rounded-md.py-1.px-2(
+		class!="{next ? nextStyle : ''} group/form actions",
+		method="post"
+	)
 		FieldTodoId(
 			hidden!="{ true }",
 			value!="{ todo.id }"
+		)
+		FieldNext(
+			hidden!="{ true }",
 		)
 		FieldScheduledToStartAt(
 			hidden!="{ true }",
@@ -88,4 +101,6 @@ Here's some documentation for this component.
 					ButtonMoveToNextDay
 				+if('todo.scheduledToStartAt')
 					ButtonUnschedule
+				+if('todo.next != null')
+					ButtonNext(next!="{ next }")
 </template>

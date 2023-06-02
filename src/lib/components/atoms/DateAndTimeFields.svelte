@@ -31,14 +31,16 @@ Notes field component
 	const defaultOuterClasses = "grid grid-cols-1 gap-y-1";
 	const defaultInputClasses = "rounded-md text-primary";
 
-	$: { date = dateValue ? convertDateToDateString(dateValue) : null; }
+	$: {
+		date = dateValue ? convertDateToDateString(dateValue) : null;
+	}
 	$: console.log("date", date);
 	$: time = null;
 
 	// combine the date and time into an ISO string which Prisma / SQLite will accept
 	// $: { isoDateString = convertDateAndTimeToDateString(now, time) }
 	$: {
-		isoDateString = date ? convertToIsoString(date, time) : '';
+		isoDateString = date ? convertToIsoString(date, time) : "";
 	}
 	// $: console.log("d", date);
 	// $: console.log("i", isoDateString);

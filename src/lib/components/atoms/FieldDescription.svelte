@@ -16,7 +16,7 @@ Here's some documentation for this component.
 	div
 		+if('hidden == false')
 			//-label.block(for="id-{genId}") Description
-		input.text-primary.border-0.text-white.px-0.py-0.inline-block(
+		input.border-0.px-0.py-0.inline-block(
 			class=" {classes}",
 			hidden!="{ hidden ? 'hidden' : 'hidden' }",
 			id!="description-{genId}",

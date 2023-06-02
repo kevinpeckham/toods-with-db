@@ -83,6 +83,32 @@ export const actions = {
 
 		throw redirect(303, `/`);
 	},
+  // - toggle next
+	toggleNext: async ({ request}) => {
+		const data = await request.formData();
+		const id = data.get("id") ? data.get("id") : null;
+		const next = data.get("next") ? true : false;
+
+		// make sure required fields are present
+		if (!id || next === null) {
+			return fail(400, { id, missing: true });
+		}
+
+		// make sure fields are the right type
+		if (typeof id != "string" || typeof next != "boolean") {
+			return fail(400, { incorrect: true });
+		}
+
+		await prisma.todo.update({
+			where: { id: id },
+			data: {
+				next: !next,
+				order: 0,
+			},
+		});
+
+		throw redirect(303, `/`);
+	},
 	//- move to today
 	moveToToday: async ({ request }) => {
 		const data = await request.formData();

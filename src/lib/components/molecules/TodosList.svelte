@@ -192,7 +192,7 @@ Here's some documentation for this component.
 					.flex.mb-2
 						slot
 				+each('filtered_todos as todo, index (todo.id)')
-					.py-2.overflow-hidden.rounded.px-2(
+					.overflow-hidden.rounded(
 						class!="hover:bg-white/10 {todo.completedAt ? 'opacity-80 text-[.75em]' : ''}"
 					)
 						TodoListItem(todo!="{ todo }")

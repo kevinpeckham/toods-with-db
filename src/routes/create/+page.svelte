@@ -112,7 +112,11 @@
 					)
 				//- scheduled to start at
 				.col-span-4
-					DateAndTimeFields(id="scheduledToStartAt", label="Scheduled to start at" dateValue!="{new Date()}")
+					DateAndTimeFields(
+						dateValue!="{ new Date() }",
+						id="scheduledToStartAt",
+						label="Scheduled to start at"
+					)
 
 				//- scheduled to end at
 				.col-span-4
