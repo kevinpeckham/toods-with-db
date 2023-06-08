@@ -83,8 +83,8 @@ export const actions = {
 
 		throw redirect(303, `/`);
 	},
-  // - toggle next
-	toggleNext: async ({ request}) => {
+	// - toggle next
+	toggleNext: async ({ request }) => {
 		const data = await request.formData();
 		const id = data.get("id") ? data.get("id") : null;
 		const next = data.get("next") ? true : false;

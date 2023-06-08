@@ -9,7 +9,7 @@ Here's some documentation for this component.
 
 	// nanoid is a library that generates random strings
 	import { nanoid } from "nanoid";
-  import { getContext } from "svelte";
+	import { getContext } from "svelte";
 
 	// genId is a function that generates a random string
 	const genId = () => nanoid(8);

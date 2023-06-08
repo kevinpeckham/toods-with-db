@@ -54,9 +54,7 @@ Here's some documentation for this component.
 			hidden!="{ true }",
 			value!="{ todo.id }"
 		)
-		FieldNext(
-			hidden!="{ true }",
-		)
+		FieldNext(hidden!="{ true }")
 		FieldScheduledToStartAt(
 			hidden!="{ true }",
 			value!="{ todo.scheduledToStartAt }"

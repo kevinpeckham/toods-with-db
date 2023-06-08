@@ -180,7 +180,7 @@ Here's some documentation for this component.
 	let filtered_todos: Todo[];
 	$: filtered_todos = todos.filter((todo) => showTodo(todo));
 	$: sorted_todos = filtered_todos.sort((a, b) => {
-		if (a.order ==  -1 && b.order == -1) return 1;
+		if (a.order == -1 && b.order == -1) return 1;
 		if (a.order > b.order) return -1;
 		if (a.order < b.order) return 1;
 		return 1;
