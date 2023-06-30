@@ -27,13 +27,13 @@ import { add24Hours } from "$utils/dateUtils";
 
 
 
-// export const load = (async () => {
-// 	const response = await prisma.user.findUnique({
-// 		where: { id: userId },
-// 		include: { todos: true },
-// 	});
-// 	return { feed: response };
-// }) satisfies PageServerLoad;
+export const load = (async () => {
+	const response = await prisma.user.findUnique({
+		where: { id: '6CXZTWvc9X8Pzm0A' },
+		include: { todos: true },
+	});
+	return { feed: response };
+}) satisfies PageServerLoad;
 
 export const actions = {
 	//- delete to do
