@@ -4,6 +4,10 @@
 
 	import type { ActionData } from "./$types";
 	export let form: ActionData;
+
+	function newDate() {
+		return new Date();
+	}
 </script>
 
 <template lang="pug">
@@ -113,7 +117,7 @@
 				//- scheduled to start at
 				.col-span-4
 					DateAndTimeFields(
-						dateValue!="{ new Date() }",
+						dateValue!="{ newDate() }",
 						id="scheduledToStartAt",
 						label="Scheduled to start at"
 					)

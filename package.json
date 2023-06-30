@@ -47,5 +47,9 @@
 	"type": "module",
 	"dependencies": {
 		"@prisma/client": "^4.16.2"
+	},
+	"engines": {
+		"node": "18.x",
+		"pnpm": "8.x"
 	}
 }
