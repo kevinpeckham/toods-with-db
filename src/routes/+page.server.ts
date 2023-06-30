@@ -9,11 +9,15 @@ import prisma from "$lib/prisma";
 // import nanoid for generating unique ids
 import { nanoid } from "nanoid";
 
+// import functions from sveltekit
+import { fail, redirect } from "@sveltejs/kit";
+
 // store functions
 import { get } from "svelte/store";
 
-// import functions from sveltekit
-import { fail, redirect } from "@sveltejs/kit";
+// user data from store
+import { activeUserId } from "$stores/activeUser";
+const userId = get(activeUserId);
 
 // types
 import type { Actions, PageServerLoad } from "./$types";
@@ -21,17 +25,15 @@ import type { Actions, PageServerLoad } from "./$types";
 // utils
 import { add24Hours } from "$utils/dateUtils";
 
-// user data from store
-import { activeUserId } from "$stores/activeUser";
-const userId = get(activeUserId);
 
-export const load = (async () => {
-	const response = await prisma.user.findUnique({
-		where: { id: userId },
-		include: { todos: true },
-	});
-	return { feed: response };
-}) satisfies PageServerLoad;
+
+// export const load = (async () => {
+// 	const response = await prisma.user.findUnique({
+// 		where: { id: userId },
+// 		include: { todos: true },
+// 	});
+// 	return { feed: response };
+// }) satisfies PageServerLoad;
 
 export const actions = {
 	//- delete to do

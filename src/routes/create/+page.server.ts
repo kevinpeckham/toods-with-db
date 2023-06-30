@@ -4,8 +4,6 @@ export const config = {
 	runtime: "nodejs18.x",
 };
 
-// src/routes/create/+page.server.ts
-
 // import prisma
 import prisma from "$lib/prisma";
 
@@ -108,7 +106,6 @@ export const actions = {
 			: null;
 		const scheduledToEndAt = scheduledToEndAtFieldValue(data);
 
-		console.log("stsa", scheduledToStartAt);
 
 		// 2.
 		if (!description || !userId) {
