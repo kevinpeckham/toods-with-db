@@ -47,7 +47,7 @@
 	"type": "module",
 	"dependencies": {
 		"@prisma/client": "^4.16.2",
-		"nanoid": "^4.0.2",
+		"nanoid": "^4.0.2"
 	},
 	"engines": {
 		"node": "18.x",
