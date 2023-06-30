@@ -23,10 +23,7 @@ const config = {
 			$utils: "./src/lib/utils",
 		},
 	},
-	engines: {
-		node: "18.x",
-		pnpm: "8.x",
-	},
+
 };
 
 export default config;

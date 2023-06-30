@@ -4,7 +4,7 @@
 	//import { nanoid } from "nanoid";
 
 	// broswer (for local storaget)
-	import { browser } from "$app/environment";
+	// import { browser } from "$app/environment";
 
 	// components
 	import EditLink from "$atoms/EditLink.svelte";
@@ -41,9 +41,9 @@
 	$: completed = todos.filter((todo) => todo.completedAt != null);
 
 	// backup todos to local storage
-	if (browser) {
-		localStorage.setItem("todos", JSON.stringify(todos));
-	}
+	// if (browser) {
+	// 	localStorage.setItem("todos", JSON.stringify(todos));
+	// }
 
 	const today = new Date();
 
