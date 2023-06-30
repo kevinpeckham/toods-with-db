@@ -28,3 +28,5 @@
 - confetti on todo completion
 - today view: keep crossed out items
 - evergreen todos - reusable todos e.g. "take a walk"
+
+# notes
