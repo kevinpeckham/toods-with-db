@@ -23,7 +23,6 @@ const config = {
 			$utils: "./src/lib/utils",
 		},
 	},
-
 };
 
 export default config;
