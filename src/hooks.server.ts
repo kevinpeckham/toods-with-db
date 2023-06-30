@@ -4,7 +4,7 @@ export const config = {
 	runtime: "nodejs18.x",
 };
 
-import type { Handle } from "@sveltejs/kit";
+// import type { Handle } from "@sveltejs/kit";
 // import { USERS } from "$env/static/private";
 // import type { AuthUser } from "$lib/types";
 
