@@ -30,7 +30,6 @@ export const load = (async () => {
 		where: { id: userId },
 		include: { todos: true },
 	});
-	console.log("response", response);
 	return { feed: response };
 }) satisfies PageServerLoad;
 

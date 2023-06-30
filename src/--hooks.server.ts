@@ -1,8 +1,8 @@
 // Serverless Functions
-/** @type {import('@sveltejs/adapter-vercel').Config} */
-export const config = {
-	runtime: "nodejs18.x",
-};
+// /** @type {import('@sveltejs/adapter-vercel').Config} */
+// export const config = {
+// 	runtime: "nodejs18.x",
+// };
 
 // import type { Handle } from "@sveltejs/kit";
 // import { USERS } from "$env/static/private";
