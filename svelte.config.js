@@ -22,6 +22,14 @@ const config = {
 			$types: "./src/lib/types",
 			$utils: "./src/lib/utils",
 		},
+		csp: {
+			directives: {
+				"script-src": [
+					"'self'",
+					"'unsafe-inline'",
+				]
+			}
+		}
 	},
 };
 

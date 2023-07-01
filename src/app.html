@@ -10,9 +10,13 @@
 			name="viewport"
 			content="width=device-width"
 		/>
+		<meta
+			name="robots"
+			content="noindex, nofollow"
+		/>
 		%sveltekit.head%
 	</head>
 	<body class="bg-primary">
-		<div class="text-slate-50">%sveltekit.body%</div>
+		<div class="text-slate-50 max-w-screen overflow-x-hidden">%sveltekit.body%</div>
 	</body>
 </html>

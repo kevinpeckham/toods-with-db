@@ -46,8 +46,8 @@ Here's some documentation for this component.
 </script>
 
 <template lang="pug">
-	form.rounded-md.py-1.px-2(
-		class!="{next ? nextStyle : ''} group/form actions",
+	form.rounded-md.py-1.text-18.max-w-full.overflow-hidden(
+		class!="lg:px-2 lg:text-16 {next ? nextStyle : ''} group/form actions",
 		method="post"
 	)
 		FieldTodoId(
@@ -64,31 +64,32 @@ Here's some documentation for this component.
 				ButtonComplete
 
 			//- number & description
-			.flex.items-center.gap-2
+			.flex.items-center.gap-2.w-full(class="lg:w-auto")
 				//- show number only if not completed
 				+if('!todo.completedAt && !hideOrderValue')
 					.inline-block { todo.order }.
 
 				//- format description
-				div(class="")
+				div.w-full
 					+if('!todo.completedAt')
 						FieldDescription(
-							classes!="bg-transparent inline-block min-w-[380px]",
+							classes!="bg-transparent inline-block lg:w-auto lg:min-w-[380px]",
 							value!="{ todo.description }"
 						)
-						//input.whitespace-nowrap.bg-primary(readonly value!="{ todo.description }")
 						+else
 							.whitespace-nowrap.line-through { todo.description }
 
 			//- tags
-			TagsBlock(tags!="{ todo.tags.split(',') }")
+			div.hidden(class="sm:flex")
+				TagsBlock(
+					tags!="{ todo.tags.split(',') }")
 
 			//- scheduled to start
 			+if('todo.scheduledToStartAt && !hideStartValue')
 				ScheduledStartBlock(start!="{ todo.scheduledToStartAt }")
 
 			//- styled as links
-			.flex.gap-2.items-center.text-13(class="opacity-0 group-hover/form:opacity-100")
+			.hidden.gap-2.items-center.text-13(class="sm:flex sm:opacity-0 group-hover/form:opacity-100")
 				+if('!todo.template')
 					EditLink(todoId!="{ todo.id }")
 				+if('!todo.template')

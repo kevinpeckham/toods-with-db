@@ -191,15 +191,15 @@ Here's some documentation for this component.
 	+if('filtered_todos.length == 0')
 		// do nothing
 		+else
-			.border-white.border-opacity-40.mt-0(
-				class!="{ showDivider ? 'pt-8 border-t' : '-mt-4' }"
+			.border-opacity-40.mt-0(
+				class!="{ showDivider ? 'sm:pt-0 lg:pt-8 border-t' : '-mt-4' }"
 			)
 				+if('showHeader')
-					.flex.mb-2
+					.flex.mb-4
 						slot
 				+each('sorted_todos as todo, index (todo.id)')
 					.overflow-hidden.rounded(
-						class!="hover:bg-white/10 {todo.completedAt ? 'opacity-80 text-[.75em]' : ''}"
+						class!="hover:bg-white/10 {todo.completedAt ? 'lg:opacity-80 text-[.85em]' : ''}"
 					)
 						TodoListItem(todo!="{ todo }")
 </template>

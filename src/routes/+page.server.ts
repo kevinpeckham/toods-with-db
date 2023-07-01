@@ -13,11 +13,11 @@ import { nanoid } from "nanoid";
 import { fail, redirect } from "@sveltejs/kit";
 
 // store functions
-// import { get } from "svelte/store";
+import { get } from "svelte/store";
 
 // user data from store
-// import { activeUserId } from "$stores/activeUser";
-// const userId = get(activeUserId);
+import { activeUserId } from "$stores/activeUser";
+const userId = get(activeUserId);
 
 // types
 import type { Actions, PageServerLoad } from "./$types";
@@ -29,7 +29,7 @@ import { add24Hours } from "$utils/dateUtils";
 
 export const load = (async () => {
 	const response = await prisma.user.findUnique({
-		where: { id: '6CXZTWvc9X8Pzm0A' },
+		where: { id: userId },
 		include: { todos: true },
 	});
 	return { feed: response };

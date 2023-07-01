@@ -89,11 +89,12 @@
 
 	//- body
 	Header(message!="It's time to get your shit together.")
-	main.relative.grid.bg-primary.p-4.pb-48.px-8(
+	main.relative.grid.bg-primary.pt-4.pb-48.px-3.max-w-screen.overflow-x-hidden(
+		class="text-18 lg:text-16 lg:px-8"
 		style="min-height: calc(100vh - 4rem)"
 	)
 		//- body
-		.grid.grid-cols-2.w-full.gap-8
+		.grid.grid-cols-1.w-full.gap-8(lg:grid-cols-2)
 			//- column 1
 			div
 				//- scheduled for today
@@ -105,11 +106,11 @@
 						todos!="{ todos }"
 					)
 						svelte:fragment
-							a.inline-block.ml-2.underline.underline-offset-4(
+							a.inline-block.underline.underline-offset-8(
 								href!="/day/{justDate(today).replace(/\\./g,'-')}"
 							) Today
 							DayAndDateBlock(date!="{ today }")
-					div
+					.hidden.div(class="lg:block")
 						CreateNewTodo
 
 				//- completed today
