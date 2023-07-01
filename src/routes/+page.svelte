@@ -21,6 +21,7 @@
 	import type { PageData } from "./$types";
 	import type { Todo } from "@prisma/client";
 	export let data: PageData;
+	$: console.log(data);
 
 	// utils
 	import {
@@ -36,7 +37,8 @@
 	let todos: Todo[];
 
 	// reactive
-	$: todos = data?.feed?.todos ?? [];
+	// $: todos = data?.feed?.todos ?? [];
+	$: todos = [];
 	$: incomplete = todos.filter((todo) => todo.completedAt == null);
 	$: completed = todos.filter((todo) => todo.completedAt != null);
 
