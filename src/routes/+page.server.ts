@@ -13,11 +13,11 @@ import { nanoid } from "nanoid";
 import { fail, redirect } from "@sveltejs/kit";
 
 // store functions
-import { get } from "svelte/store";
+// import { get } from "svelte/store";
 
 // user data from store
-import { activeUserId } from "$stores/activeUser";
-const userId = get(activeUserId);
+// import { activeUserId } from "$stores/activeUser";
+// const userId = get(activeUserId);
 
 // types
 import type { Actions, PageServerLoad } from "./$types";
