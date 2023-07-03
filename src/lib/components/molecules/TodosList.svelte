@@ -192,7 +192,7 @@ Here's some documentation for this component.
 		// do nothing
 		+else
 			.border-opacity-40.mt-0(
-				class!="{ showDivider ? 'sm:pt-0 lg:pt-8 border-t' : '-mt-4' }"
+				class!="{ showDivider ? 'pt-4 sm:pt-0 lg:pt-8 border-t' : 'lg: -mt-4' }"
 			)
 				+if('showHeader')
 					.flex.mb-4

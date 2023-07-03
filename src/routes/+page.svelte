@@ -106,7 +106,7 @@
 						todos!="{ todos }"
 					)
 						svelte:fragment
-							a.inline-block.underline.underline-offset-8(
+							a.inline-block.opacity-80(
 								href!="/day/{justDate(today).replace(/\\./g,'-')}"
 							) Today
 							DayAndDateBlock(date!="{ today }")
@@ -114,7 +114,7 @@
 						CreateNewTodo
 
 				//- completed today
-				.mb-8
+				.mb-8.hidden(class="sm:block")
 					TodosList(
 						hideStartValue!="{ true }",
 						showCompleted!="{ true }",
@@ -135,7 +135,7 @@
 						todos!="{ todos }"
 					)
 						svelte:fragment
-							a.inline-block.ml-2.underline.underline-offset-4(
+							a.inline-block(
 								href!="/day/{today.getMonth()+1}-{today.getDate()+1}-{today.getFullYear()}"
 							) Tomorrow
 							DayAndDateBlock(date!="{ getTomorrowDate() }")
