@@ -188,18 +188,19 @@ Here's some documentation for this component.
 </script>
 
 <template lang="pug">
-	+if('filtered_todos.length == 0')
-		// do nothing
-		+else
-			.border-opacity-40.mt-0(
-				class!="{ showDivider ? 'pt-4 sm:pt-0 lg:pt-8 border-t' : 'lg: -mt-4' }"
-			)
-				+if('showHeader')
-					.flex.mb-4
-						slot
-				+each('sorted_todos as todo, index (todo.id)')
-					.overflow-hidden.rounded(
-						class!="hover:bg-white/10 {todo.completedAt ? 'lg:opacity-80 text-[.85em]' : ''}"
-					)
-						TodoListItem(todo!="{ todo }")
+	+if('filtered_todos.length != 0')
+		//- divider
+		+if('showDivider')
+			hr.border-current.my-4.opacity-40
+
+		//- header
+		+if('showHeader')
+			.mb-4
+				slot(name="header")
+
+		//- todos container
+		.grid.grid-cols-1.gap-y-2
+			+each('sorted_todos as todo, index (todo.id)')
+				//- todo container
+				TodoListItem(todo!="{ todo }")
 </template>
