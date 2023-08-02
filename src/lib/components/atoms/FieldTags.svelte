@@ -4,20 +4,19 @@ Here's some documentation for this component.
 -->
 
 <script lang="ts">
+	import { nanoid } from "nanoid";
 	export let formId = "";
 	export let classes = "";
-	export let hidden = false;
 	export let value = "";
-	export let placeholder: string | null = null;
+	export let placeholder: string | null = "tags";
 </script>
 
 <template lang="pug">
-	input.border-0.px-0.py-0.block.rounded-md(
-		class!="lg:w-full truncate placeholder-current/80 {classes}",
+	input.border-0.block.rounded-md(
+		class!="placeholder-current/80 {classes}",
 		bind:value!="{ value }",
-		hidden!="{ hidden ? 'hidden' : 'hidden' }",
-		id!="description-{formId}",
-		name!="description",
+		id!="tags-{formId}",
+		name!="tags",
 		placeholder!="{ placeholder }",
 		type="text"
 	)

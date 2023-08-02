@@ -15,7 +15,7 @@
 	import FieldTodoId from "$atoms/FieldTodoId.svelte";
 	import TodosList from "$molecules/TodosList.svelte";
 	import DayAndDateBlock from "$atoms/DayAndDateBlock.svelte";
-	import CreateNewTodo from "$atoms/ButtonCreateNewTodo.svelte";
+	import FormCreateNewTodo from "$atoms/FormCompactCreateNewTodo.svelte";
 
 	// types
 	import type { PageData } from "./$types";
@@ -79,39 +79,34 @@
 </script>
 
 <template lang="pug">
-	//- head
-	svelte:head
-		title toods
-		meta(
-			content="",
-			name=""
-		)
-
 	//- body
-	Header(message!="It's time to get your shit together.")
-	main.relative.grid.bg-primary.pt-4.pb-48.px-3.max-w-screen.overflow-x-hidden(
-		class="text-18 lg:text-16 lg:px-8"
+	main.relative.grid.bg-primary.pt-4.pb-48.px-4.max-w-screen.overflow-x-hidden(
+		class="lg:px-8",
 		style="min-height: calc(100vh - 4rem)"
 	)
 		//- body
-		.grid.grid-cols-1.w-full.gap-8(lg:grid-cols-2)
+		.grid.grid-cols-1.w-full.gap-8(class="lg:grid-cols-2")
 			//- column 1
-			div
+			div(data-column)
 				//- scheduled for today
 				.mb-8
-					TodosList(
-						hideStartValue!="{ true }",
-						showDivider!="{ false }",
-						showOnlyScheduledToStartOn!="{ today }",
-						todos!="{ todos }"
-					)
-						svelte:fragment
-							a.inline-block.opacity-80(
-								href!="/day/{justDate(today).replace(/\\./g,'-')}"
-							) Today
-							DayAndDateBlock(date!="{ today }")
-					.hidden.div(class="lg:block")
-						CreateNewTodo
+					.mb-6
+						TodosList(
+							hideStartValue!="{ true }",
+							showDivider!="{ false }",
+							showOnlyScheduledToStartOn!="{ today }",
+							todos!="{ todos }"
+						)
+							//- header
+							svelte:fragment(slot="header")
+								a.inline-block.opacity-80(
+									href!="/day/{justDate(today).replace(/\\./g,'-')}"
+								) Today
+								DayAndDateBlock(date!="{ today }")
+
+					//- form: add a new to do
+					.hidden(class="lg:block")
+						FormCreateNewTodo
 
 				//- completed today
 				.mb-8.hidden(class="sm:block")
@@ -155,7 +150,7 @@
 						span.opacity-80.leading-none &nbsp;+
 
 			//- column 2
-			div
+			div(data-column)
 				//- scheduled for the past
 				TodosList(
 					showArchived!="{ false }",

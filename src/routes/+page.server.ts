@@ -25,14 +25,17 @@ import type { Actions, PageServerLoad } from "./$types";
 // utils
 import { add24Hours } from "$utils/dateUtils";
 
-
-
 export const load = (async () => {
 	const response = await prisma.user.findUnique({
 		where: { id: userId },
 		include: { todos: true },
 	});
-	return { feed: response };
+
+	// set page metadata
+	const metaDescription = `Toods is a simple to do list app that helps you get your sh*t together. It's free and open source.`;
+	const metaTitle = `Toods | Get Your Sh*t Together`;
+
+	return { feed: response, metaDescription, metaTitle };
 }) satisfies PageServerLoad;
 
 export const actions = {
@@ -222,11 +225,11 @@ export const actions = {
 		});
 	},
 	// create new todo
-	createNewTodoForToday: async ({ request }) => {
+	createTodo: async ({ request }) => {
 		const data = await request.formData();
 		const next = data.get("next") ? true : false;
 		const today = data.get("today") ? true : false;
-		const order = data.get("order") ? Number(data.get("order")) : 0;
+		const order = data.get("order") ? Number(data.get("order")) : 1;
 		const priority = data.get("priority") ? Number(data.get("priority")) : 0;
 		const friction = data.get("friction") ? Number(data.get("friction")) : 0;
 		const joy = data.get("joy") ? Number(data.get("joy")) : 0;

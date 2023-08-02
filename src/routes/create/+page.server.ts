@@ -44,7 +44,6 @@ function completedAtFieldValue(data: FormData) {
 		} else return null;
 	}
 }
-
 function dueAtFieldValue(data: FormData) {
 	const value = data.get("dueAt");
 	if (value == "null" || value == "" || value == undefined) {
@@ -58,7 +57,6 @@ function dueAtFieldValue(data: FormData) {
 		} else return null;
 	}
 }
-
 function scheduledToStartAtFieldValue(data: FormData) {
 	const value = data.get("scheduledToStartAt");
 	if (value == "null" || value == "" || value == undefined) {
@@ -72,7 +70,6 @@ function scheduledToStartAtFieldValue(data: FormData) {
 		} else return null;
 	}
 }
-
 function scheduledToEndAtFieldValue(data: FormData) {
 	const value = data.get("scheduledToEndAt");
 	if (value == "null" || value == "" || value == undefined) {
@@ -105,7 +102,6 @@ export const actions = {
 			? data.get("scheduledToStartAt")
 			: null;
 		const scheduledToEndAt = scheduledToEndAtFieldValue(data);
-
 
 		// 2.
 		if (!description || !userId) {
