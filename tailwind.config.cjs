@@ -2,6 +2,9 @@
 module.exports = {
 	content: ["./src/**/*.{html,pug,js,svelte,ts}"],
 	theme: {
+		data: {
+			next: "next=''",
+		},
 		extend: {
 			colors: {
 				// custom rules for starter web page, remove these for your own project
