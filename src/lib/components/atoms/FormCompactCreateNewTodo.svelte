@@ -33,7 +33,7 @@ Here's some documentation for this component.
 	import type { Todo } from "@prisma/client";
 
 	// props
-	export let todo: Todo;
+	// export let todo: Todo;
 
 	// declare variables
 	let hideStartValue: boolean;

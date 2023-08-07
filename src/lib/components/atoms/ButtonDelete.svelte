@@ -7,7 +7,7 @@ Here's some documentation for this component.
 </script>
 
 <template lang="pug">
-	button.inline-block.back.underline.underline-offset-4.leading-none(
+	button.inline-block.underline.underline-offset-4.leading-none(
 		class="hover:text-accent opacity-80 hover:opacity-100",
 		formaction="?/deleteTodo",
 		title="Delete todo",

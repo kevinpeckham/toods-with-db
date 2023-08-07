@@ -4,18 +4,16 @@ Here's some documentation for this component.
 -->
 
 <script lang="ts">
+	// store api
+	import { writable } from "svelte/store";
+
 	// context api
 	import { getContext, setContext } from "svelte";
 
 	// components
 	import ButtonComplete from "$atoms/ButtonComplete.svelte";
-	import ButtonDelete from "$atoms/ButtonDelete.svelte";
-	import ButtonMoveToNextDay from "./ButtonMoveToNextDay.svelte";
-	import ButtonMoveToToday from "./ButtonMoveToToday.svelte";
-	import ButtonNext from "$atoms/ButtonNext.svelte";
-	import ButtonUnschedule from "./ButtonUnschedule.svelte";
 	import TagsBlock from "$atoms/TagsBlock.svelte";
-	import EditLink from "$atoms/EditLink.svelte";
+	import TodoMenuItem from "$atoms/TodoMenuItem.svelte";
 
 	// Field Components
 	import FieldNext from "$atoms/FieldNext.svelte";
@@ -36,19 +34,20 @@ Here's some documentation for this component.
 	// variables
 	$: hideStartValue = getContext("hideStartValue") as boolean;
 	$: hideOrderValue = getContext("hideOrderValue") as boolean;
-	$: next = todo.next as boolean;
+	$: next = todo.next ? "" : null;
 	$: contextMenuOpen = false;
 
 	// context
-	$: setContext("next", next);
+	$: setContext("todo", todo);
+	$: setContext("todoId", todo.id);
 
-	// constants
-	const nextStyle = "bg-accent text-primary";
+
 </script>
 
 <template lang="pug">
 	form.flex.justify-start.items-center.gap-2.px-2.rounded-md.py-1.w-full.relative(
-		class!="bg-neutral-50/5 hover:bg-neutral-50/10 lg:px-2 {next ? nextStyle : ''} group/form",
+		data-next!="{ todo.next ? '' : null }"
+		class!="data-next:bg-accent data-next:text-primary bg-neutral-50/5 hover:bg-neutral-50/10 lg:px-2 group/form",
 		method="post"
 	)
 		//- draggable cover
@@ -62,7 +61,6 @@ Here's some documentation for this component.
 				value!="{ todo.id }"
 			)
 
-			//- next: hidden field
 			FieldNext(hidden!="{ true }")
 
 			//- start: hidden field
@@ -81,7 +79,7 @@ Here's some documentation for this component.
 			+if('!todo.completedAt')
 				FieldDescription(
 					classes!="bg-transparent inline-block lg:w-auto lg:min-w-[380px]",
-					value!="{ todo.description }"
+					value!="{ todo.description}"
 				)
 				+else
 					.whitespace-nowrap.line-through { todo.description }
@@ -141,39 +139,62 @@ Here's some documentation for this component.
 								`
 						)
 
-			//- context menu
-			.absolute.right-1.top-1.rounded.flex.w-40.z-10.pointer-events-auto.bg-slate-400.rounded.pl-2.pr-4.pt-1.pb-4.shadow-xl.text-primary(
+			//- todo context menu
+			.absolute.right-1.top-1.rounded.flex.w-40.z-10.pointer-events-auto.bg-slate-300.rounded.pl-2.pr-4.pt-2.pb-4.shadow-xl.text-primary(
 				class=`
 				hover:shadow-xl
 				text-[.85em]`
 			)
 				//- menu items
-				.pointer-events-auto.flex-grow.grid.grid-cols-1.gap-1
+				.pointer-events-auto.flex-grow.grid.grid-cols-1.gap-2.place-items-start.py-2(class="lg:text-[1.2em]")
+					//- edit
 					+if('!todo.template')
-						div
-							EditLink(todoId!="{ todo.id }")
+						TodoMenuItem(
+							href="/t/{todo.id}",
+							title="edit todo") edit
+					//- delete
 					+if('!todo.template')
-						div
-							ButtonDelete
+						TodoMenuItem(
+							formaction="?/deleteTodo",
+							tag="button"
+							title="delete todo"
+							type="submit"
+							) delete
+					//- move to today
 					+if('(!todo.scheduledToStartAt || !isToday(todo.scheduledToStartAt)) && !todo.template')
-						div
-							ButtonMoveToToday
-					+if('todo.scheduledToStartAt && !todo.template')
-						div
-							ButtonMoveToNextDay
-					+if('todo.scheduledToStartAt')
-						div
-							ButtonUnschedule
-					+if('!todo.completed')
-						div
-							ButtonNext(next!="{ next }")
+						TodoMenuItem(
+								formaction="?/moveToToday",
+								tag="button"
+								title="schedule todo to start today"
+								type="submit"
+								) move to today
 
-				//- button container
-				//- .pointer-events-none.flex.flex-col.justify-between.select-none.opacity-0
-				//- 	button.block.top-0.right-0.cursor-pointer.text-right.h-6(
-				//- 		class="text-base"
-				//- 	)
-				//- 		span.inline-block.px-2.rounded.pointer-events-none(class="hover:bg-slate-50/10") x
-				//- 	//- click blocker -- prevents click from triggering the next menu below
-				//- 	.flex-grow.pointer-events-auto
+					//- push back 24 hours
+					+if('todo.scheduledToStartAt && !todo.template')
+						TodoMenuItem(
+								formaction="?/moveToNextDay",
+								tag="button"
+								title="Reschedule todo to 24 hours later"
+								type="submit"
+								) push ( +1 day )
+
+					//- unschedule
+					+if('todo.scheduledToStartAt')
+						TodoMenuItem(
+								formaction="?/unscheduleTodo",
+								tag="button"
+								title="unschedule todo"
+								type="submit"
+								) unschedule
+
+					//- toggle next
+					+if('!todo.completed')
+						TodoMenuItem(
+							formaction="?/toggleNext",
+							tag="button"
+							title="toggle next"
+							type="submit"
+							) { todo.next ? "undo next" : "make next" }
+
+
 </template>

@@ -119,8 +119,7 @@
 						showOnlyScheduledToStartOn!="{ today }",
 						todos!="{ todos }"
 					)
-						svelte:fragment
-							DayAndDateBlock(date!="{ today }")
+
 
 				//- scheduled for tomorrow
 				.mb-8
@@ -129,7 +128,7 @@
 						showOnlyScheduledToStartOn!="{ getTomorrowDate() }",
 						todos!="{ todos }"
 					)
-						svelte:fragment
+						svelte:fragment(slot="header")
 							a.inline-block(
 								href!="/day/{today.getMonth()+1}-{today.getDate()+1}-{today.getFullYear()}"
 							) Tomorrow
@@ -138,13 +137,13 @@
 				//- scheduled for the future
 				TodosList(
 					showScheduledInPast!="{ false }",
-					showScheduledToStartAfter!="{ getTomorrowDate() }",
+					showScheduledInFuture!="{ true }",
 					showScheduledToday!="{ false }",
 					showScheduledTomorrow!="{ false }",
 					showUnscheduled!="{ false }",
 					todos!="{ todos }"
 				)
-					svelte:fragment
+					svelte:fragment(slot="header")
 						| Scheduled for beyond tomorrow
 						DayAndDateBlock(date!="{ newDayFromToday(2) }")
 						span.opacity-80.leading-none &nbsp;+
@@ -163,7 +162,7 @@
 					showUnscheduled!="{ false }",
 					todos!="{ todos }"
 				)
-					svelte:fragment
+					svelte:fragment(slot="header")
 						| Scheduled for
 						a.inline-block.ml-2.underline.underline-offset-4(href="/") the past
 				//- templates
@@ -174,7 +173,7 @@
 					showTemplates!="{ true }",
 					todos!="{ todos }"
 				)
-					svelte:fragment
+					svelte:fragment(slot="header")
 						| Templates
 
 				//- unscheduled
@@ -186,6 +185,6 @@
 					showUnscheduled!="{ true }",
 					todos!="{ todos }"
 				)
-					svelte:fragment
+					svelte:fragment(slot="header")
 						| Unscheduled
 </template>

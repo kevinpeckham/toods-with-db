@@ -92,6 +92,8 @@ export const actions = {
 		const data = await request.formData();
 		const id = data.get("id") ? data.get("id") : null;
 		const next = data.get("next") ? true : false;
+		if (next) console.log(id)
+
 
 		// make sure required fields are present
 		if (!id || next === null) {
