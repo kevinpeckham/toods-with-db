@@ -4,68 +4,53 @@ Here's some documentation for this component.
 -->
 
 <script lang="ts">
-	import { getContext } from "svelte";
+	// import context api functions
+	import { setContext, getContext } from "svelte";
 
-	// nano id
+	// import nano id function for generating unique ids
 	import { nanoid } from "nanoid";
-	const formId = nanoid();
 
-	// components
+	// import types from prisma
+	import type { Todo } from "@prisma/client";
 
-	import ButtonComplete from "$atoms/ButtonComplete.svelte";
-	import ButtonDelete from "$atoms/ButtonDelete.svelte";
-	// import ButtonMoveToNextDay from "./ButtonMoveToNextDay.svelte";
-	// import ButtonMoveToToday from "./ButtonMoveToToday.svelte";
-	// import ButtonUnschedule from "./ButtonUnschedule.svelte";
-
-	// import TagsBlock from "$atoms/TagsBlock.svelte";
-	// import EditLink from "$atoms/EditLink.svelte";
-
-	// Field Components
-	// import FieldTodoId from "$atoms/FieldTodoId.svelte";
-	// import FieldScheduledToStartAt from "$atoms/FieldScheduledToStart.svelte";
+	// import components
 	import FieldDescription from "$atoms/FieldDescription.svelte";
 	import FieldTags from "$atoms/FieldTags.svelte";
 
-	import ScheduledStartBlock from "$atoms/ScheduledStartBlock.svelte";
+	// generate new unique id for todo
+	const todoId = nanoid();
 
-	// types from the Prisma schema
-	import type { Todo } from "@prisma/client";
+	// pass todoId to children via context api
+	setContext("todoId", todoId);
 
 	// props
-	// export let todo: Todo;
-
+	export let action = "?/createTodoToday";
 	// declare variables
-	let hideStartValue: boolean;
-	let hideOrderValue: boolean;
 	let value: string;
-	$: hideStartValue = getContext("hideStartValue") as boolean;
-	$: hideOrderValue = getContext("hideOrderValue") as boolean;
-	$: description = "";
 
-	// utils
-	import { isToday } from "$utils/dateUtils";
+	$: description = "";
 </script>
 
 <template lang="pug">
-	form(class="group/form text-[0.85rem]", id!="{ formId }", method="post")
+	.px-2.mb-2.opacity-80(class="text-[0.85rem]") Add Todo to Today
+	form(class="group/form text-[0.85rem]", id!="create-todo-form-{ todoId }", method="post")
 		.grid.grid-cols-6.gap-x-2.items-center(class="")
+			//- description field
 			FieldDescription(
 				classes="col-span-3 bg-white/5 px-2 py-1",
 				bind:value!="{ description }",
-				formId!="{ formId }",
-				placeholder="add new"
+				placeholder="description"
 			)
+			//- tags field
 			FieldTags(
 				classes="bg-white/5 px-2 py-1",
-				formId!="{ formId }",
 				placeholder="tags"
 			)
-			//- button
-			div
-				button.bg-accent.text-primary.rounded.opacity-80.px-2(
+			//- submit button
+			.h-full
+				button.bg-accent.text-primary.rounded.opacity-80.px-2.h-full(
 					class!="text-[0.75rem] outline-neutral-100/60 {description ? 'inline-block' : 'hidden'}",
-					formaction="?/createTodo",
+					formaction!="{ action }",
 					type="submit"
 				) Submit
 </template>

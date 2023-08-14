@@ -15,8 +15,6 @@ Here's some documentation for this component.
 
 	// props
 	export let hidden = false;
-
-
 </script>
 
 <template lang="pug">

@@ -5,7 +5,7 @@ Here's some documentation for this component.
 
 <script lang="ts">
 	import { nanoid } from "nanoid";
-	const genId = () => nanoid(8);
+	const genId = nanoid();
 	export let hidden = false;
 	export let value = "";
 </script>

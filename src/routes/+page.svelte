@@ -15,7 +15,7 @@
 	import FieldTodoId from "$atoms/FieldTodoId.svelte";
 	import TodosList from "$molecules/TodosList.svelte";
 	import DayAndDateBlock from "$atoms/DayAndDateBlock.svelte";
-	import FormCreateNewTodo from "$atoms/FormCompactCreateNewTodo.svelte";
+	import FormCompactCreateNewTodo from "$atoms/FormCompactCreateNewTodo.svelte";
 
 	// types
 	import type { PageData } from "./$types";
@@ -104,9 +104,9 @@
 								) Today
 								DayAndDateBlock(date!="{ today }")
 
-					//- form: add a new to do
+					//- form: add a new to do to today
 					.hidden(class="lg:block")
-						FormCreateNewTodo
+						FormCompactCreateNewTodo(action!="?/createTodoToday")
 
 				//- completed today
 				.mb-8.hidden(class="sm:block")
@@ -119,7 +119,6 @@
 						showOnlyScheduledToStartOn!="{ today }",
 						todos!="{ todos }"
 					)
-
 
 				//- scheduled for tomorrow
 				.mb-8
@@ -136,8 +135,8 @@
 
 				//- scheduled for the future
 				TodosList(
-					showScheduledInPast!="{ false }",
 					showScheduledInFuture!="{ true }",
+					showScheduledInPast!="{ false }",
 					showScheduledToday!="{ false }",
 					showScheduledTomorrow!="{ false }",
 					showUnscheduled!="{ false }",

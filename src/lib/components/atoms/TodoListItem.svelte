@@ -4,6 +4,9 @@ Here's some documentation for this component.
 -->
 
 <script lang="ts">
+	// import enhance
+	import { enhance } from "$app/forms";
+
 	// store api
 	import { writable } from "svelte/store";
 
@@ -20,6 +23,7 @@ Here's some documentation for this component.
 	import FieldTodoId from "$atoms/FieldTodoId.svelte";
 	import FieldScheduledToStartAt from "$atoms/FieldScheduledToStart.svelte";
 	import FieldDescription from "$atoms/FieldDescription.svelte";
+	import FieldTags from "$atoms/FieldTags.svelte";
 	import ScheduledStartBlock from "$atoms/ScheduledStartBlock.svelte";
 
 	// utils
@@ -40,22 +44,21 @@ Here's some documentation for this component.
 	// context
 	$: setContext("todo", todo);
 	$: setContext("todoId", todo.id);
-
-
 </script>
 
 <template lang="pug">
-	form.flex.justify-start.items-center.gap-2.px-2.rounded-md.py-1.w-full.relative(
-		data-next!="{ todo.next ? '' : null }"
+	form.flex.justify-start.items-center.gap-2.px-2.rounded-md.py-1.w-full.relative.max-w-full(
 		class!="data-next:bg-accent data-next:text-primary bg-neutral-50/5 hover:bg-neutral-50/10 lg:px-2 group/form",
-		method="post"
+		data-next!="{ todo.next ? '' : null }",
+		method="POST",
+		use:enhance
 	)
 		//- draggable cover
 		//-.absolute.inset-0.bg-red-500
 
 		//- hidden fields
 		.absolute
-			//- id: hidden field
+			//- id: hidden
 			FieldTodoId(
 				hidden!="{ true }",
 				value!="{ todo.id }"
@@ -63,37 +66,35 @@ Here's some documentation for this component.
 
 			FieldNext(hidden!="{ true }")
 
-			//- start: hidden field
+			//- start:
 			FieldScheduledToStartAt(
 				hidden!="{ true }",
 				value!="{ todo.scheduledToStartAt }"
 			)
 
-		//- .flex.items-center.justify-start.gap-2.w-full.bg-red-500
-		//- .flex.items-center.gap-4
+		//- complete button
 		+if('!todo.completedAt && !todo.template')
 			ButtonComplete
 
 		//- format description
-		.flex-grow(class="sm:w-1/2")
+		.flex-grow(class="sm:w-1/2 ]")
 			+if('!todo.completedAt')
 				FieldDescription(
-					classes!="bg-transparent inline-block lg:w-auto lg:min-w-[380px]",
-					value!="{ todo.description}"
+					classes!="bg-transparent inline-block lg:w-auto lg:min-w-[380px]"
 				)
 				+else
 					.whitespace-nowrap.line-through { todo.description }
 
 		//- tags
-		.hidden(class="sm:flex sm:flex-none")
-			TagsBlock(tags!="{ todo.tags.split(',') }")
+		.hidden.flex-shrink(class="max-w-[40%] sm:flex")
+			FieldTags
 
 		//- scheduled to start
-		+if('todo.scheduledToStartAt && !hideStartValue')
-			ScheduledStartBlock(start!="{ todo.scheduledToStartAt }")
+		//- +if('todo.scheduledToStartAt && !hideStartValue')
+		//- 	ScheduledStartBlock(start!="{ todo.scheduledToStartAt }")
 
 		//- context menu -- uses details / summary to trigger
-		details.flex.h-full(class="group/context-menu")
+		details.flex.h-full.flex-none(class="group/context-menu")
 			//- button to trigger context menu
 			summary(
 				class=`
@@ -146,55 +147,56 @@ Here's some documentation for this component.
 				text-[.85em]`
 			)
 				//- menu items
-				.pointer-events-auto.flex-grow.grid.grid-cols-1.gap-2.place-items-start.py-2(class="lg:text-[1.2em]")
+				.pointer-events-auto.flex-grow.grid.grid-cols-1.gap-2.place-items-start.py-2(
+					class="lg:text-[1.2em]"
+				)
 					//- edit
 					+if('!todo.template')
 						TodoMenuItem(
 							href="/t/{todo.id}",
-							title="edit todo") edit
+							title="edit todo"
+						) edit
 					//- delete
 					+if('!todo.template')
 						TodoMenuItem(
 							formaction="?/deleteTodo",
-							tag="button"
-							title="delete todo"
+							tag="button",
+							title="delete todo",
 							type="submit"
-							) delete
+						) delete
 					//- move to today
 					+if('(!todo.scheduledToStartAt || !isToday(todo.scheduledToStartAt)) && !todo.template')
 						TodoMenuItem(
-								formaction="?/moveToToday",
-								tag="button"
-								title="schedule todo to start today"
-								type="submit"
-								) move to today
+							formaction="?/moveToToday",
+							tag="button",
+							title="schedule todo to start today",
+							type="submit"
+						) move to today
 
 					//- push back 24 hours
 					+if('todo.scheduledToStartAt && !todo.template')
 						TodoMenuItem(
-								formaction="?/moveToNextDay",
-								tag="button"
-								title="Reschedule todo to 24 hours later"
-								type="submit"
-								) push ( +1 day )
+							formaction="?/moveToNextDay",
+							tag="button",
+							title="Reschedule todo to 24 hours later",
+							type="submit"
+						) push ( +1 day )
 
 					//- unschedule
 					+if('todo.scheduledToStartAt')
 						TodoMenuItem(
-								formaction="?/unscheduleTodo",
-								tag="button"
-								title="unschedule todo"
-								type="submit"
-								) unschedule
+							formaction="?/unscheduleTodo",
+							tag="button",
+							title="unschedule todo",
+							type="submit"
+						) unschedule
 
 					//- toggle next
 					+if('!todo.completed')
 						TodoMenuItem(
 							formaction="?/toggleNext",
-							tag="button"
-							title="toggle next"
+							tag="button",
+							title="toggle next",
 							type="submit"
-							) { todo.next ? "undo next" : "make next" }
-
-
+						) { todo.next ? "undo next" : "make next" }
 </template>

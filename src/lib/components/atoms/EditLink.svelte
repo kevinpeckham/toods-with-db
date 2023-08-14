@@ -12,7 +12,6 @@ Link to bring user to the edit page for a todo.
 
 	// get todo from context api
 	const todo = getContext("todo") as Todo;
-
 </script>
 
 <template lang="pug">
