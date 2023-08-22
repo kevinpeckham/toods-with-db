@@ -84,7 +84,7 @@ Form field for description data point of single todo.
 			}
 		}
 		// if invalid character
-		else if (key.length === 1 && key?.match(/[^a-z1-9-:.,;?/()]/gi)) {
+		else if (key.length === 1 && key?.match(/[^a-z1-9-:.,;?/() ]/gi)) {
 			preventDefault();
 			return;
 		} else return;

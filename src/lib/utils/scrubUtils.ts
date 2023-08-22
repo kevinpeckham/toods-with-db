@@ -4,7 +4,7 @@ export function scrubDescriptionString(str: string) {
 
 	// replace any invalid characters
 	// allow only a-z, hyphen, and colon
-	const replaced = limited.replace(/[^a-z1-9-:.,;?/()]/gi, "");
+	const replaced = limited.replace(/[^a-z1-9-:.,;?/() ]/gi, "");
 
 	// return
 	return replaced;
