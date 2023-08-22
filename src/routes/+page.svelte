@@ -1,11 +1,5 @@
 <!-- Perhaps the load function on this page should only load incomplete todos ??-->
 <script lang="ts">
-	// import nanoid for generating unique ids
-	//import { nanoid } from "nanoid";
-
-	// broswer (for local storaget)
-	// import { browser } from "$app/environment";
-
 	// components
 	import EditLink from "$atoms/EditLink.svelte";
 	import Header from "$organisms/Header.svelte";
@@ -14,8 +8,8 @@
 	import CompleteButton from "$atoms/ButtonComplete.svelte";
 	import FieldTodoId from "$atoms/FieldTodoId.svelte";
 	import TodosList from "$molecules/TodosList.svelte";
+	import TodoListItem from "$atoms/TodoListItem.svelte";
 	import DayAndDateBlock from "$atoms/DayAndDateBlock.svelte";
-	import FormCompactCreateNewTodo from "$atoms/FormCompactCreateNewTodo.svelte";
 
 	// types
 	import type { PageData } from "./$types";
@@ -40,19 +34,7 @@
 	$: incomplete = todos.filter((todo) => todo.completedAt == null);
 	$: completed = todos.filter((todo) => todo.completedAt != null);
 
-	// backup todos to local storage
-	// if (browser) {
-	// 	localStorage.setItem("todos", JSON.stringify(todos));
-	// }
-
 	const today = new Date();
-
-	//- sort by order
-	// $: todos.sort((a, b) => {
-	// 	if (a.order > b.order) return 1;
-	// 	if (a.order < b.order) return -1;
-	// 	return 0;
-	// });
 
 	let todo: Todo;
 
@@ -64,18 +46,6 @@
 
 	let name = "test";
 	$: name = data.feed?.name ? data.feed.name : "test";
-
-	// functions
-	// function displayDate(date: Date) {
-	// 	const dateString = date.toLocaleString(); // e.g. 9/19/2021, 10:00:00 AM
-	// 	const dateOnly = dateString.split(",")[0]; // e.g. 9/19/2021
-	// 	const timeString = dateString.split(",")[1].trim(); // e.g. 10:00:00 AM
-	// 	const timeOnly = timeString.split(" ")[0]; // e.g. 10:00:00
-	// 	const timeNoSeconds = timeString.split(":").slice(0, 2).join(":"); // e.g. 10:00
-	// 	const amPm = timeString.split(" ")[1]; // e.g. AM
-
-	// 	return [dateOnly, timeNoSeconds, amPm] as string[];
-	// }
 </script>
 
 <template lang="pug">
@@ -106,7 +76,12 @@
 
 					//- form: add a new to do to today
 					.hidden(class="lg:block")
-						FormCompactCreateNewTodo(action!="?/createTodoToday")
+						//-.px-2.mb-2.opacity-80(class="text-[0.85rem]") Add Todo to Today
+						//- FormCompactCreateNewTodo(action!="?/createTodoToday")
+						TodoListItem(isNewTodo!="{ true }")
+							svelte:fragment(slot="header")
+								| Add a new to do to today
+								DayAndDateBlock(date!="{ today }")
 
 				//- completed today
 				.mb-8.hidden(class="sm:block")

@@ -263,12 +263,9 @@ export const actions = {
 		const data = await request.formData();
 
 		const id = data.get("id") ? data.get("id") : null;
-		console.log("id", id);
 		const currentStartDate = data.get("scheduledToStartAt")
 			? data.get("scheduledToStartAt")
 			: null;
-
-		console.log("st", currentStartDate);
 
 		// make sure required fields are present
 		if (!id || !currentStartDate) {
